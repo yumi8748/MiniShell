@@ -1,23 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:19 by yu-chen          ###   ########.fr       */
+/*   Created: 2023/11/15 16:59:41 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/02/22 16:40:32 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/libft.h"
 
-int	main(int ac, char **av, char **env)
+void	ft_putnbr_fd(int n, int fd)
 {
-	if (ac > 1 && av)
+	char	digit;
+
+	if (n < 0)
 	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
+		if (n == -2147483648)
+		{
+			ft_putchar_fd('-', fd);
+			ft_putchar_fd('2', fd);
+			n = 147483648;
+		}
+		else
+		{
+			ft_putchar_fd('-', fd);
+			n = -n;
+		}
 	}
-	return (minishell(init_minienv(env)));
+	if (n >= 10)
+		ft_putnbr_fd(n / 10, fd);
+	digit = '0' + n % 10;
+	ft_putchar_fd(digit, fd);
 }

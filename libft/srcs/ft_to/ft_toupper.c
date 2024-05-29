@@ -1,23 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_toupper.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:19 by yu-chen          ###   ########.fr       */
+/*   Created: 2023/11/07 19:36:31 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/02/22 16:40:32 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/libft.h"
 
-int	main(int ac, char **av, char **env)
+int	ft_toupper(int c)
 {
-	if (ac > 1 && av)
-	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
-	}
-	return (minishell(init_minienv(env)));
+	if (c >= 'a' && c <= 'z')
+		c = c - 32;
+	return (c);
 }

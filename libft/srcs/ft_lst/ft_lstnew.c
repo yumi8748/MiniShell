@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:19 by yu-chen          ###   ########.fr       */
+/*   Created: 2023/11/17 21:08:26 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/02/22 16:40:32 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/libft.h"
 
-int	main(int ac, char **av, char **env)
+t_list	*ft_lstnew(void *content)
 {
-	if (ac > 1 && av)
-	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
-	}
-	return (minishell(init_minienv(env)));
+	t_list	*new;
+
+	new = malloc(sizeof(t_list));
+	if (!new)
+		return (NULL);
+	new->content = content;
+	new->next = NULL;
+	return (new);
 }

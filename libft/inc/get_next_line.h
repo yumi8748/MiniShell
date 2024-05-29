@@ -1,23 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:19 by yu-chen          ###   ########.fr       */
+/*   Created: 2023/12/08 20:54:41 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/02/28 19:26:29 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
-int	main(int ac, char **av, char **env)
-{
-	if (ac > 1 && av)
-	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
-	}
-	return (minishell(init_minienv(env)));
-}
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1000
+# endif
+
+# include <stddef.h>
+# include <stdlib.h>
+# include <unistd.h>
+
+char	*get_next_line(int fd);
+char	*read_and_updateleft(int fd, char *left_str);
+char	*get_line(char *left_str);
+char	*new_left_str(char *left_str);
+
+#endif

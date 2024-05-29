@@ -1,23 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_itoa_base.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:19 by yu-chen          ###   ########.fr       */
+/*   Created: 2023/11/29 21:05:06 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/02/22 16:40:32 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/libft.h"
 
-int	main(int ac, char **av, char **env)
+char	*ft_itoa_base(unsigned long n, char *base)
 {
-	if (ac > 1 && av)
+	unsigned long	nb;
+	size_t			len;
+	int				base_len;
+	char			*res;
+
+	nb = n;
+	len = n == 0;
+	base_len = ft_strlen(base);
+	while (n != 0)
 	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
+		len++;
+		n /= ft_strlen(base);
 	}
-	return (minishell(init_minienv(env)));
+	res = ft_calloc(len + 1, 1);
+	if (!res)
+		return (NULL);
+	*res = *base;
+	while (nb)
+	{
+		res[len - 1] = base[nb % base_len];
+		len--;
+		nb /= base_len;
+	}
+	return (res);
 }

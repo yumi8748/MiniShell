@@ -1,23 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:19 by yu-chen          ###   ########.fr       */
+/*   Created: 2023/11/10 15:06:38 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/02/22 16:40:32 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/libft.h"
 
-int	main(int ac, char **av, char **env)
+void	*ft_calloc(size_t n, size_t size)
 {
-	if (ac > 1 && av)
+	void	*ptr;
+
+	if (n == 0 || size == 0)
 	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
+		ptr = (void *)malloc(0);
+		if (!ptr)
+			return (NULL);
+		return (ptr);
 	}
-	return (minishell(init_minienv(env)));
+	if (n > SIZE_MAX / size)
+		return (NULL);
+	ptr = malloc(n * size);
+	if (!ptr)
+		return (NULL);
+	else
+		ft_bzero(ptr, n * size);
+	return (ptr);
 }

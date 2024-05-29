@@ -1,23 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_handle_int.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:19 by yu-chen          ###   ########.fr       */
+/*   Created: 2024/02/28 19:22:40 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/02/28 19:30:11 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/ft_printf.h"
 
-int	main(int ac, char **av, char **env)
+int	ft_handle_int(va_list ap)
 {
-	if (ac > 1 && av)
+	long long	n;
+	int			neg;
+
+	n = va_arg(ap, int);
+	neg = 0;
+	if (n < 0)
 	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
+		n *= -1;
+		neg++;
+		write(1, "-", 1);
 	}
-	return (minishell(init_minienv(env)));
+	return (ft_putnbr_base(n, "0123456789") + neg);
 }

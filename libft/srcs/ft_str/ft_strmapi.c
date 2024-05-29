@@ -1,23 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/28 16:46:19 by yu-chen          ###   ########.fr       */
+/*   Created: 2023/11/14 18:05:56 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/02/22 16:40:32 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/libft.h"
 
-int	main(int ac, char **av, char **env)
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	if (ac > 1 && av)
+	char	*str;
+	int		len;
+	int		i;
+
+	if (!s || !f)
+		return (NULL);
+	len = ft_strlen(s);
+	str = malloc(sizeof(char) * (len + 1));
+	if (!str)
+		return (0);
+	i = 0;
+	while (s[i])
 	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
+		str[i] = f(i, s[i]);
+		i++;
 	}
-	return (minishell(init_minienv(env)));
+	str[i] = '\0';
+	return (str);
 }
