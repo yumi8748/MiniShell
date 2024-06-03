@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minienv_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 13:37:20 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/29 14:14:29 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/03 13:09:22 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*value_only(char *key_pair)
 	while (key_pair[i] != '=' && key_pair[i])
 		i++;
 	if (!key_pair[i])
-		return ;
+		return (NULL);
 	return (&key_pair[i + 1]);
 }
 

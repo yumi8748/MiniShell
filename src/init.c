@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 16:48:41 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/29 14:19:27 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/03 13:23:37 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_env	*init_minienv(char **env)
 	return (list);
 }
 
-list_append(char *key_pair, t_env **list)
+void	list_append(char *key_pair, t_env **list)
 {
 	t_env	*new_node;
 	t_env	*aux_node;
@@ -48,6 +48,6 @@ list_append(char *key_pair, t_env **list)
 	}
 	aux_node = *list;
 	while (aux_node->next)
-		aux_node->key_pair = aux_node->next;
+		aux_node = aux_node->next;
 	aux_node->next = new_node;
 }
