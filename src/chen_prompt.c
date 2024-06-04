@@ -14,7 +14,6 @@
 
 #define BUF_SIZE 2048
 # define BUILTIN_MISUSE 2
-//# define LLONG_MAX 9223372036854775807
 # define BOLD    "\001\e[1m\002"
 # define RESET_SIZE   "\001\e[0m\002"
 # define GREEN	"\001\e[0;32m\002"
@@ -24,7 +23,7 @@
 # define CYAN	"\001\e[0;96m\002"
 # define WHITE	"\001\e[0;37m\002"
 # define RESET	"\001\e[0m\002"
-
+//long long	min= -9 223 372 036 854 775 807	 max= 9 223 372 036 854 775 807
 static char *cat_prompt(char *user, char *hostname, char *dir)
 {
 	static char prompt[BUF_SIZE];
@@ -104,28 +103,31 @@ char	*do_prompt(t_env *minienv)
 /////////////////////////////////////////////////////////////////////////////////////////
 void	shell_exit(char **args, t_env **minienv)
 {
-	int	exit_status;
+	long long	exit_status;
 
 	exit_status = 0;
 	if (args && args[1])
 	{
-		if (!is_valid_long_long(args[1]))
-			exit_with_error("exit", "numeric argument required", BUILTIN_MISUSE);
-		if (args[2])
-			exit_with_error("exit", "too many arguments", EXIT_FAILURE);
-
-		exit_status = ft_atoll(args[1]);
+		str_to_ll(args[1], &exit_status);
+		if (exit_status >=0)
+			exit_status = exit_status % 256;
+		else
+			exit_status = 256 + (exit_status % 256);
 	}
-	clean_up_exit(args, minienv, exit_status);
+	clean_up_exit(args, minienv, (int)exit_status, 1);
 }
 
-void	clean_up_exit(char **args, t_env **minienv, int exit_status)
+void	clean_up_exit(char **args, t_env **minienv, int exit_status, int flag)
 {
+	if (flag == 1)
+		ft_putstr_fd("exit\n", STDOUT_FILENO);
 	rl_clear_history();
-	free_minienv(minienv);
+	if (minienv)
+		free_minienv(minienv);
 	close_all_fds();
-	free_str_array(args);
-	ft_putstr_fd("exit\n", STDOUT_FILENO);
+	check_args_error(args);
+	if (args)
+		free_str_array(args);
 	exit(exit_status);
 }
 
@@ -134,8 +136,6 @@ void	free_minienv(t_env **minienv)
 	t_env	*aux;
 	t_env	*next;
 
-	if (!minienv || !*minienv) 
-		return;
 	aux = *minienv;
 	while (aux)
 	{
@@ -149,17 +149,16 @@ void	free_minienv(t_env **minienv)
 
 void	check_args_error(char **args)
 {
-	char	*exit_status;
+	long long exit_status;
 
-	if (!args || !args[1])
+	if (!args || !args[1])  //args[1]不存在说明直接退出exit 没有退出码 所以就是exit success?
 	{
 		if (args)
 			free_str_array(args);
 		close_all_fds();
 		exit(EXIT_SUCCESS);
 	}
-	exit_status = args[1];
-	if (!is_valid_long_long(exit_status))
+	if (!str_to_ll(args[1], &exit_status))
 	{
 		free_str_array(args);
 		exit_with_error("exit", "numeric argument required", BUILTIN_MISUSE);
@@ -180,36 +179,6 @@ void	print_error_msg(char *command, char *msg)
 	ft_putstr_fd("\n", STDERR_FILENO);
 }
 
-void	exit_with_error(char *command, char *msg, int error)
-{
-	print_error_msg(command, msg);
-	clean_up_exit(NULL, NULL, error);
-}
-int	is_valid_long_long(char *str)
-{
-	long long	out;
-	int			c;
-
-	if (ft_strlen(str) > 20)
-		return (0);
-	if (ft_strncmp(str, "-9223372036854775808", 21) == 0)
-		return (1);
-	out = 0;
-	if (*str == '-' || *str == '+')
-		str++;
-	while (*str)
-	{
-		if (*str < '0' || *str > '9')
-			return (0);
-		c = *str - '0';
-		if (out > (LLONG_MAX - c) / 10)
-			return (0);
-		out = out * 10 + c;
-		str++;
-	}
-	return (1);
-}
-
 void	print_perror_msg(char *command, char *perror_msg)
 {
 	ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -217,6 +186,74 @@ void	print_perror_msg(char *command, char *perror_msg)
 	ft_putstr_fd(": ", STDERR_FILENO);
 	perror(perror_msg);
 }
+
+void	exit_with_error(char *command, char *msg, int error)
+{
+	print_error_msg(command, msg);
+	clean_up_exit(NULL, NULL, error, 0);
+}
+
+
+static char *skip_space(char **s)
+{
+	while (ft_isspace(**s) && **s)
+		(*s)++;
+	return (*s);
+}
+
+static int is_llong_min(char *s, long long *nb)
+{
+	if (ft_strncmp(s, "-9223372036854775808", 21) == 0)
+	{
+		*nb = LLONG_MIN;
+		return (1);
+	}
+	return (0);
+}
+
+static int handle_sign(char **s)
+{	
+	int sign;
+
+	sign = 1;
+	if (**s == '-' || **s == '+')
+	{
+		if (**s == '-')
+			sign = -1;
+		(*s)++;
+	}
+	else
+		sign = 1;
+	return (sign);
+}
+
+int	str_to_ll(char *s, long long *nb)
+{
+	long long	res;
+	int	sign;
+
+	s = skip_space(&s);
+	res = 0;
+	if (!*s)
+		return (0);
+	sign = handle_sign(&s);
+	if (is_llong_min(s, nb) == 1)
+		return (1);
+	while (*s)
+	{
+		if (*s < '0' || *s > '9')
+			return (0);
+		if (res  > (LLONG_MAX - (*s - '0')) / 10)   //优势：避免了乘法操作直接引起的溢出。
+			return (0);
+		res = res * 10 + (*s - '0');
+
+		s++;
+	}
+	*nb = res * sign;
+	return (1);
+}
+
+
 
 void	close_extra_fds(void)
 {
@@ -239,32 +276,6 @@ void	close_all_fds(void)
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 }
-
-long long	ft_atoll(const char *str)
-{
-	long long	number;
-	int			sign;
-
-	number = 0;
-	sign = 1;
-	while (ft_isspace(*str) && !(*str == '-' || *str == '+'))
-	{
-		str++;
-	}
-	if (*str == '-' || *str == '+')
-	{
-		if (*str == '-')
-			sign = sign * -1;
-		str++;
-	}
-	while (*str && ft_isdigit(*str))
-	{
-		number = (number * 10) + (*str - '0');
-		str++;
-	}
-	return (number * sign);
-}
-
 
 
 void    free_str_array(char **s)
