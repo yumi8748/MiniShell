@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 14:39:19 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/03 18:38:36 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/04 18:00:21 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <sys/stat.h> // stat
 # include <signal.h> // sigaction
 # include <fcntl.h> // open flags
+# include <limits.h>  //llong max    
 # include "defines.h"
 # include "structs.h"
 
@@ -54,18 +55,16 @@ void	check_args_error(char **args);
 void	print_error_msg(char *command, char *msg);
 
 void	exit_with_error(char *command, char *msg, int error);
-int	is_valid_long_long(char *str);
 
 void	print_perror_msg(char *command, char *perror_msg);
 
 void	close_extra_fds(void);
 
 void	close_all_fds(void);
+int	str_to_ll(char *s, long long *nb);
 
-long long	ft_atoll(const char *str);
 
-
-void	clean_up_exit(char **args, t_env **minienv, int exit_status);
+void	clean_up_exit(char **args, t_env **minienv, int exit_status, int flag);
 
 
 void    free_str_array(char **s);
