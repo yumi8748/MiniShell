@@ -1,21 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   check_input_utils2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/28 16:48:15 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/05/29 14:29:27 by yu-chen          ###   ########.fr       */
+/*   Created: 2024/06/03 17:03:42 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/06/05 15:28:53 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-int	*minishell(t_env *minienv)
+int	is_invalid_token(char c)
 {
-	while (1)
-	{
-		define_main_signals();
-	}
+	if (c == '|')
+		return (TRUE);
+	if (c == '>')
+		return (TRUE);
+	if (c == '<')
+		return (TRUE);
+	return (FALSE);
+}
+
+int	unexpected_token(char *input)
+{
+	if (input[0] == '<' && input[1] == '<')
+		return (syntax_error("<<"));
+	else if (input[0] == '>' && input[1] == '>')
+		return (syntax_error(">>"));
+	input[1] = '\0';
+	return (syntax_error(input));
 }

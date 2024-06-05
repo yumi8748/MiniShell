@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 15:27:23 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/02/27 19:16:05 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/03 19:20:50 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ static char	*word_duplicate(char const *str, int start, int end)
 
 	i = 0;
 	word = malloc((end - start + 1) * sizeof(char));
+	if (!word)
+		return (NULL);
 	while (start < end)
 		word[i++] = str[start++];
 	word[i] = '\0';
@@ -48,10 +50,10 @@ static char	*word_duplicate(char const *str, int start, int end)
 
 char	**ft_split(char const *s, char c)
 {
-	size_t		i;
-	size_t		j;
-	int			index;
-	char		**res;
+	size_t	i;
+	size_t	j;
+	int		index;
+	char	**res;
 
 	res = malloc((count_words(s, c) + 1) * sizeof(char *));
 	if (!s || !res)
@@ -77,24 +79,24 @@ char	**ft_split(char const *s, char c)
 #include "../../inc/libft.h"
 #include <stdio.h>
 
-int main() 
+int	main(void)
 {
-    char const *inputString = "ahhhhhh-eeeee-noooo-umm";
-    char delimiter = '-';
+	char const *inputString = "ahhhhhh-eeeee-noooo-umm";
+	char delimiter = '-';
 
-    char **result = ft_split(inputString, delimiter);
+	char **result = ft_split(inputString, delimiter);
 
-    if (result) {
-        // 打印分割后的单词
-        for (int i = 0; result[i] != NULL; i++) {
-            printf("Word %d: %s\n", i + 1, result[i]);
-        }
+	if (result) {
+		// 打印分割后的单词
+		for (int i = 0; result[i] != NULL; i++) {
+			printf("Word %d: %s\n", i + 1, result[i]);
+		}
 
-        // 释放分配的内存
-        free_arr(result);
-    } else {
-        printf("Memory allocation failed.\n");
-    }
+		// 释放分配的内存
+		free_arr(result);
+	} else {
+		printf("Memory allocation failed.\n");
+	}
 
-    return 0;
+	return (0);
 }*/
