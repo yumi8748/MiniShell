@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 13:24:29 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/04 16:26:28 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/05 16:34:18 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int	minishell(t_env *minienv)
 	{
 		define_main_signals();
 		input = do_prompt(minienv);
-		//if (has_input_error(input, &exit_status, minienv))
-		// 	continue ;
+		if (has_input_error(input, &exit_status, minienv))
+		 	continue ;
 		// handle_expansions(&input, minienv, exit_status);
 		// if (!has_pipe(input))
 		// 	exit_status = execute_one_command(input, &minienv);

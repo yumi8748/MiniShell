@@ -12,17 +12,6 @@
 
 #include "../inc/minishell.h"
 
-#define BUF_SIZE 2048
-# define BUILTIN_MISUSE 2
-# define BOLD    "\001\e[1m\002"
-# define RESET_SIZE   "\001\e[0m\002"
-# define GREEN	"\001\e[0;32m\002"
-# define YELLOW	"\001\e[0;93m\002"
-# define BLUE	"\001\e[0;34m\002"
-# define PURPLE	"\001\e[0;35m\002"
-# define CYAN	"\001\e[0;96m\002"
-# define WHITE	"\001\e[0;37m\002"
-# define RESET	"\001\e[0m\002"
 //long long	min= -9 223 372 036 854 775 807	 max= 9 223 372 036 854 775 807
 static char *cat_prompt(char *user, char *hostname, char *dir)
 {
@@ -278,19 +267,4 @@ void	close_all_fds(void)
 }
 
 
-void    free_str_array(char **s)
-{
-    int i;
-  
-    i = 0;
-    if (s != NULL)
-    {
-        while (s[i] != NULL)
-        {
-            free(s[i]);
-            s[i] = NULL;
-            i++;
-        }
-        free(s);
-    }
-}
+
