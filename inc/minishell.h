@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 14:39:19 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/07 17:32:07 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/08 15:26:13 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,10 +110,9 @@ void	clean_up_exit(char **args, t_env **minienv, int exit_status, int flag);
 int handle_heredoc(char *input, int *exit_status, t_env *minienv);
 int skip_quotes(char *s, int i, char quote_type);
 char *find_here_symbol(char *str);
-//int find_end(char *s, int start);
-int find_end(char *s, int start, char quote);
+int find_end(char *s, int start);
 char *name_after_redirect(char *s);
-int	is_label_delimeter(char c);
+int	is_label_delimiter(char c);
 int exec_heredoc(char *delimiter, int heredoc_ref, int *exit_status, t_env *minienv);
 void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc_number);
 char *tmp_here_file(int heredoc_ref);
@@ -126,4 +125,7 @@ void	expand_exit_status(char **input, int exit_status);
 void    free_str_array(char **s);
 
 
-#endif
+
+char *extract_delimiter(char *s, int start);
+void	free_str(char *s);
+#endif 
