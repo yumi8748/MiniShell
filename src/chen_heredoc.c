@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:04:51 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/07 19:42:50 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/08 16:13:57 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ leochen@paul-f3Ar4s1:/sgoinfre/goinfre/Perso/leochen/minishell_$ <<"$?"
 "" 和 '' 之间的都是delimiter   包括之间的不一样种类的单个或多个因号  也没有expansion 
 */
 
+
+
 int handle_heredoc(char *input, int *exit_status, t_env *minienv)
 {
     static int heredoc_ref;
@@ -47,18 +49,19 @@ int handle_heredoc(char *input, int *exit_status, t_env *minienv)
         heredoc_ref--; // 每次找到 heredoc 标志时递减编号
 		here_symbol ++;  //跳过第一个<
         // 获取 heredoc 的分隔符名称
-        delimiter = name_after_redirect(here_symbol);
+        delimiter = name_after_redirect(here_symbol);  //这里传入的heresymbol其实是从第二个<开始的
         // 执行 heredoc 处理
         if (!exec_heredoc(delimiter, heredoc_ref, exit_status, minienv))
         {
-            free(delimiter); // 如果执行失败，释放内存并返回失败
+            free_str(delimiter); // 如果执行失败，释放内存并返回失败
             return (0);
         }
-        free(delimiter); // 释放内存
+        free_str(delimiter); // 释放内存
     }
 
     return (1); // 成功处理所有 heredoc，返回成功
 }
+
 
 int skip_quotes(char *s, int i, char quote_type)
 {
@@ -93,74 +96,57 @@ char *find_here_symbol(char *str)
 
 
 
-int find_end(char *s, int start, char quote)
+//mememove字符串 s 的第二个字符开始复制整个字符串内容（包括末尾的 '\0' 结束字符）到字符串的开始位置，即从 s[1] 到 s[0]。这通常用于移除字符串的第一个字符。
+char *name_after_redirect(char *s)
 {
-    int end;
+    int start;
+	int	end;
+	char *delimiter;
+	char *rest_cmd;
+
+	start = 0;  //实际上s是从第二个<开始的 
+	ft_memmove(s, s + 1, ft_strlen(s + 1) + 1); //s是dest 指向放复制内容的目标数组 s+1指向要复制的数据源的指针 ft_strlen(s + 1) + 1是要复制的字节数 它会从源位置 src 复制 n 个字节到目标位置 des
+    if (s[start] == '>')
+		ft_memmove(s, s + 1, ft_strlen(s + 1) + 1);
+	while (s[start] == ' ' || s[start] == '\t')
+        start++;
+	end = find_end(s, start);
+	delimiter = ft_substr(&s[start], 0, end);
+	rest_cmd = &s[end];
+	ft_memmove(s, rest_cmd, ft_strlen(rest_cmd) + 2);
+    printf("Extracted delimiter: '%s'\n", delimiter);
+	printf("res cmd: '%s'\n", s);
+    return (delimiter);
+}
+
+int	find_end(char *s, int start)
+{
+	int	end;
 
 	end = start;
-    if (quote == 'n')
-	{		
-		while (s[end] && !is_label_delimeter(s[end]))
-    	{
-			end++;
+	while (s[end] && !is_label_delimiter(s[end]))
+	{
+		if (s[end] == '\'')
+		{
+			ft_memmove(&s[end], &s[end] + 1, ft_strlen(&s[end] + 1) + 1);
+			while (s[end] && s[end] != '\'')
+				end++;
+			ft_memmove(&s[end], &s[end] + 1, ft_strlen(&s[end] + 1) + 1);
 		}
-	}
-	else
-	{
-		while (s[end] && s[end] != quote)
+		else if (s[end] == '\"')
+		{
+			ft_memmove(&s[end], &s[end] + 1, ft_strlen(&s[end] + 1) + 1);
+			while (s[end] && s[end] != '\"')
+				end++;
+			ft_memmove(&s[end], &s[end] + 1, ft_strlen(&s[end] + 1) + 1);
+		}
+		else if (s[end] && !is_label_delimiter(s[end]))
 			end++;
-		   // 如果未找到匹配的闭引号，报告错误
-        if (s[end] != quote)
-        {
-            print_unclosedquote_err();
-            return -1; // 返回-1表示错误
-        }
 	}
-    return (end);
+	return (end);
 }
 
-
-char *name_after_redirect(char *s)  //错的
-{
-	int		start;
-	int		end;
-	char	*name;
-	char	*rest_cmd;
-	char	quote;
-	
-	quote = 'n';
-	start = 0;
-	start++; //在heredoc的情况移动到第二个>
-	if (s[start] == '<') //如果是 说明是heredoc  如果不是 说明是单个的> 跳过这个if
-		start++;
-	while (s[start] == ' ' || s[start] == '\t')
-			start++;
-	if (s[start] == '\"' || s[start] == '\'')
-	{
-		quote = (s[start]);
-		start++;
-	}
-	//end = find_end(&s[start], start, quote);
-	end = find_end(s, start, quote);
-	printf("start= %i, end=%i\n", start, end);
-	name = ft_substr(s, start, end -start);
-	rest_cmd = &s[end];
-	while (*rest_cmd == ' ' || *rest_cmd == '\t')
-        rest_cmd++;
-
-    // Move the rest_cmd content to the start of s
-    if (*rest_cmd != '\0') {
-        ft_memmove(s, rest_cmd, ft_strlen(rest_cmd) + 1);
-    } else {
-        s[0] = '\0';
-    }
-	printf("rest_cmd: %s\n", rest_cmd);
-	printf("Extracted delimiter: '%s'\n", name);
-	return (name);
-}
-
-
-int	is_label_delimeter(char c)
+int	is_label_delimiter(char c)
 {
 	if (c == ' ' || c == '>' || c == '<' || c == '|' || c == '\t')
 		return (1);
@@ -193,6 +179,13 @@ int exec_heredoc(char *delimiter, int heredoc_ref, int *exit_status, t_env *mini
 }
 
 
+void	free_str(char *s)
+{
+	if (s)
+		free(s);
+}
+
+
 void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc_number)
 {
 	int file_fd;
@@ -201,8 +194,7 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
 
     file = tmp_here_file(heredoc_number);  // 生成临时文件名储存heredoc_ref  /tmp/heredoc-1
     file_fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);  // 打开该临时文件  0644 作为文件的权限参数，表示创建一个新文件，文件所有者有读写权限，文件所有组和其他用户只有读权限
-    free(file);
-   
+    free_str(file);
     while (1)
     {
         line_read = readline("> ");  // 读取用户输入  char *readline(const char *prompt);    char *readline(const char *prompt);
@@ -218,11 +210,11 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
 		expand_exit_status(&line_read, *exit_status);  // 扩展退出状态
        // expand_variables(&line_read, minienv);  // 扩展变量
         ft_putendl_fd(line_read, file_fd);  // 写入临时文件
-        free(line_read); //readline 函数会自动分配内存来存储用户输入的字符串，因此在使用完这块内存后，我们需要使用 free 函数将其释放
+        free_str(line_read); //readline 函数会自动分配内存来存储用户输入的字符串，因此在使用完这块内存后，我们需要使用 free 函数将其释放
     }
-    free(line_read);
+    free_str(line_read);
     close(file_fd);
-    free(delimiter);
+    free_str(delimiter);
     free_minienv(&minienv);
     rl_clear_history();
     exit(EXIT_SUCCESS);  // 退出子进程
@@ -237,7 +229,7 @@ char *tmp_here_file(int heredoc_ref)  //生成一个临时文件名，用于存�
     here_ref = ft_itoa(heredoc_ref);  // 将 heredoc_number 转换为字符串
     ft_strlcat(file, "/tmp/heredoc", 30);  // 将 "/tmp/heredoc" 拼接到 filename 中
     ft_strlcat(file, here_ref, 30);  // 将 number_str 拼接到 filename 中
-    free(here_ref);  // 释放 number_str 内存
+    free_str(here_ref);  // 释放 number_str 内存
     return ft_strdup(file);  // 返回 filename 的副本
 }
 
