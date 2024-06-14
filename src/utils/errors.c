@@ -1,34 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_input_utils2.c                               :+:      :+:    :+:   */
+/*   errors.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/03 17:03:42 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/05 15:56:29 by yu-chen          ###   ########.fr       */
+/*   Created: 2024/06/10 13:09:25 by yu-chen           #+#    #+#             */
+/*   Updated: 2024/06/12 18:48:29 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-int	is_invalid_token(char c)
+void	print_perror_msg(char *cmd, char *perror_msg)
 {
-	if (c == '|')
-		return (TRUE);
-	if (c == '>')
-		return (TRUE);
-	if (c == '<')
-		return (TRUE);
-	return (FALSE);
-}
-
-int	unexpected_token(char *input)
-{
-	if (input[0] == '<' && input[1] == '<')
-		return (syntax_error("<<"));
-	else if (input[0] == '>' && input[1] == '>')
-		return (syntax_error(">>"));
-	input[1] = '\0';
-	return (syntax_error(input));
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	ft_putstr_fd(cmd, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	perror(perror_msg);
 }

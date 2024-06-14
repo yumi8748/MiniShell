@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 15:05:06 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/05 15:29:23 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/10 15:28:39 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	redirect_without_label(char *str)
 		return (FALSE);
 	if (redir_pos[0] == '<' && redir_pos[1] == '<')
 		redir_pos++;
-	else if (redir_pos[0] == '>' && redir_pos[1] == '>')
+	else if (_pos[0] == '>' && redir_pos[1] == '>')
 		redir_pos++;
 	redir_pos++;
 	while (*redir_pos == ' ' || *redir_pos == '\t')

@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:12:23 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/05 15:00:17 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/12 20:06:16 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,17 @@ char	**split_cmds(char *cmds)
 	split_cmds = ft_split(cmds, '|');
 	restore_pipes(split_cmds);
 	return (split_cmds);
+}
+
+int	is_empty(char *str)
+{
+	if (!str)
+		return (1);
+	while (*str)
+	{
+		if (*str != ' ')
+			return (0);
+		str++;
+	}
+	return (1);
 }
