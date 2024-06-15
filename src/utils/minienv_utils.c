@@ -6,11 +6,11 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 13:37:20 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/03 13:09:22 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/05 15:41:22 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/minishell.h"
 
 char	*value_only(char *key_pair)
 {
