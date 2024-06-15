@@ -5,7 +5,8 @@ NAME = minishell
 LIBFT = libft/libft.a
 LIBFT_DIR = ./libft
 
-SRC = $(wildcard src/*.c) src/signals/signals.c src/utils/minienv_utils.c
+SRC = $(shell find src -name '*.c')
+
 
 OBJ = $(SRC:.c=.o)
 
