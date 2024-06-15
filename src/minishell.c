@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 13:24:29 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/05 16:34:18 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/15 13:56:26 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,17 @@ int	minishell(t_env *minienv)
 	{
 		define_main_signals();
 		input = do_prompt(minienv);
-		if (has_input_error(input, &exit_status, minienv))
+		if (is_input_error(input, &exit_status, minienv))
 		 	continue ;
-		// handle_expansions(&input, minienv, exit_status);
-		// if (!has_pipe(input))
-		// 	exit_status = execute_one_command(input, &minienv);
+		handle_expansions(&input, minienv, exit_status);
+		 if (!has_pipe(input))
+		 	exit_status = execute_one_cmd(input, &minienv);
 		// else
 		// {
 		// 	commands = split_commands(input);
 		// 	free(input);
 		// 	exit_status = execute_multiple_commands(commands, &minienv);
-		// 	free_array(commands);
+		// 	free_str_array(commands);
 		// }
 	}
 	return (exit_status);

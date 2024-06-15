@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:04:51 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/08 16:13:57 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/15 17:58:31 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,8 +193,10 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
     char *file;
 
     file = tmp_here_file(heredoc_number);  // 生成临时文件名储存heredoc_ref  /tmp/heredoc-1
-    file_fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);  // 打开该临时文件  0644 作为文件的权限参数，表示创建一个新文件，文件所有者有读写权限，文件所有组和其他用户只有读权限
-    free_str(file);
+	printf("%s\n",file);
+	file_fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);  // 打开该临时文件  0644 作为文件的权限参数，表示创建一个新文件，文件所有者有读写权限，文件所有组和其他用户只有读权限
+    printf("%d\n",file_fd);
+	free_str(file);
     while (1)
     {
         line_read = readline("> ");  // 读取用户输入  char *readline(const char *prompt);    char *readline(const char *prompt);

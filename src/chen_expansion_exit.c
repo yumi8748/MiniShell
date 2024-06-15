@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:59:36 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/08 17:54:26 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/15 17:28:02 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,5 @@ void	expand_exit_status(char **input, int exit_status)
 		i = find_exit_marker(rest_input);
 	}
 	free(exit_str);
-	printf("expanded exit str:%s\n", *input);
+	//printf("expanded exit str:%s\n", *input);
 }
