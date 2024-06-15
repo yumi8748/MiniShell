@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 14:39:19 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/08 15:26:13 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/15 18:44:10 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,10 @@ int	minishell(t_env *minienv);
 
 
 //check_input_utils.c       yu
-int	has_pipe(char *str);
-char	*get_next_pipe(char *str);
-char	get_next_redir(char *str);
-char	*get_redir_pos(char *str, char redir_char);
-int	syntax_error(char *token);
+//int	has_pipe(char *str);
+char	*find_pipe(char *str);
+char	*find_redir_pos(char *str, char redir_char);
+int	print_syntax_error(char *token);
 
 //check_input_utils2.c       yu
 int	is_invalid_token(char c);
@@ -80,12 +79,12 @@ char	**split_cmds(char *cmds);
 
 //input_errors.c
 int	print_unclosedquote_err(void);
-int	has_unclosed_quotes(char *str);
+int	is_unclosed_quotes(char *str);
 int	is_empty(char *str);
-int	has_input_error(char *input, int *exit_status, t_env *minienv);
+int	is_input_error(char *input, int *exit_status, t_env *minienv);
 
 //input_errors2.c       yu
-int	has_empty_pipe(char *str);
+int	empty_pipe(char *str);
 int	redirect_without_label(char *str);
 int	start_with_pipe(char *str);
 int	is_invalid_syntax(char *str);
@@ -118,11 +117,54 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
 char *tmp_here_file(int heredoc_ref);
 int	wait_for_child(int pid, int is_last_child);
 
+//handle_expansions.c     yu
+
+ int	is_valid_varchar(char c);
+int	varname_size(char *s);
+char	*find_var_pos(char *input);
+void	update_input(char **input, char *var_value, char *after_var);
+void	expand_variables(char **input, t_env *minienv);
+void	handle_expansions(char **input, t_env *minienv, int exit_status);
+
 //chen_expansion.c
 void	expand_exit_status(char **input, int exit_status);
 
 //free.c         leo
 void    free_str_array(char **s);
+
+
+
+//chen_one_cmd.c    leoc
+char	get_redir_symbol(char *s);
+int	handle_infile_redir(char *cmd, int original_fd[2]);
+int handle_outfile_redir(char *cmd, int original_fd[2]);
+int handle_redirects(char *cmd, int original_fds[2]);
+void	redirect_heredoc(char *cmd, int heredoc_ref);
+int execute_one_cmd(char *cmd, t_env **minienv);
+int is_builtin(char *cmd);
+int	execute_builtin(char **args, t_env **minienv);
+char	**split_args(char *cmd);
+int has_quote(char *cmd);
+void replace_spaces(char *cmd, char quote);
+void	remove_quotes(char *cmd);
+void	restore_spaces(char **args);
+int	has_pipe(char *s);
+
+
+//chen_one_cmd2.c      leo
+int	execute_normal_cmd(char **args, t_env *minienv);
+void exec_error(char **args, char *path, char **envp);
+int  minienv_size(t_env *minienv);
+char **from_minienv_to_env(t_env *minienv);
+int	is_folder(char *cmd);
+void	command_exit(char **args, t_env *minienv, int exit_status);
+char *get_path(char *cmd, t_env *minienv);
+int is_path(char *cmd);
+char *get_real_path(char *cmd, void *minienv);
+char *get_path_from_env(char *cmd, t_env *minienv);
+char *find_executable_path(char *cmd, char **splited_paths);
+
+
 
 
 
