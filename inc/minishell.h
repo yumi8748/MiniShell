@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 14:39:19 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/12 20:17:09 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/17 14:50:53 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@
 # include <signal.h>
 # include <stdlib.h>
 # include <sys/stat.h>
+# include <sys/wait.h>
 # include <unistd.h>
 
 t_env	*init_minienv(char **env);

@@ -6,13 +6,25 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 15:52:51 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/12 18:56:06 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/14 20:56:49 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-void	exec_forked_cmd(char *cmd, char **cmds, t_env **minienv)
+static void	save_original_fds(int original_fds[2])
+{
+	original_fds[0] = dup(STDIN_FILENO);
+	original_fds[1] = dup(STDOUT_FILENO);
+}
+
+static void	restore_original_fds(int original_fds[2])
+{
+	redirect_fd(original_fds[IN], STDIN_FILENO);
+	redirect_fd(original_fds[OUT], STDOUT_FILENO);
+}
+
+static void	exec_forked_cmd(char *cmd, char **cmds, t_env **minienv)
 {
 	char	**args;
 
@@ -25,7 +37,7 @@ void	exec_forked_cmd(char *cmd, char **cmds, t_env **minienv)
 		exec_external(args, *minienv);
 }
 
-void	handle_redirects(char *cmd, char **cmds, t_env **minienv)
+static void	handle_redirects(char *cmd, char **cmds, t_env **minienv)
 {
 	char	redir;
 
@@ -47,28 +59,6 @@ void	handle_redirects(char *cmd, char **cmds, t_env **minienv)
 		}
 		redir = get_next_redir(cmd);
 	}
-}
-
-void	handle_pipe(int original_fd_out, char *current_cmd, char **cmds)
-{
-	int		is_first_cmd;
-	int		has_next_cmd;
-	char	*last_cmd;
-	int		pipe_fd[2];
-
-	is_first_cmd = (current_cmd == cmds[0]);
-	last_cmd = cmds[arr_len(cmds) - 1];
-	has_next_cmd = (current_cmd != last_cmd);
-	if (!is_first_cmd)
-		redirect_fd(pipe_fd[IN], STDIN_FILENO);
-	if (has_next_cmd)
-	{
-		if (pipe(pipe_fd) == -1)
-			print_perror_msg("pipe", current_cmd);
-		redirect_fd(pipe_fd[OUT], STDOUT_FILENO);
-	}
-	else
-		redirect_fd(original_fd_out, STDOUT_FILENO);
 }
 
 int	exec_multi_cmds(char **cmds, t_env **minienv)
@@ -95,4 +85,6 @@ int	exec_multi_cmds(char **cmds, t_env **minienv)
 		}
 		i++;
 	}
+	restore_original_fds(original_fds);
+	return (wait_for_children(children_pid));
 }

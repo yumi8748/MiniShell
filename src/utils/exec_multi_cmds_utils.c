@@ -6,13 +6,13 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 16:57:37 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/12 20:18:54 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/14 20:55:09 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-static int	is_folder(char *command)
+int	is_folder(char *command)
 {
 	struct stat	statbuf;
 
@@ -37,12 +37,6 @@ void	quit_child(char **cmds, t_env **minienv)
 	free_array(cmds);
 	close_all_fds();
 	exit(EXIT_FAILURE);
-}
-
-void	save_original_fds(int original_fds[2])
-{
-	original_fds[0] = dup(STDIN_FILENO);
-	original_fds[1] = dup(STDOUT_FILENO);
 }
 
 int	arr_len(char **arr)
