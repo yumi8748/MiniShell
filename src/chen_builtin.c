@@ -6,144 +6,135 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 14:16:11 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/07 12:56:50 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/17 18:49:28 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-// //echo
-// int	echo(char **args)
-// {
-// 	int	i;
-// 	int	new_line;
+//echo
+int is_minus_n(char *s)
+{
+	if (s[0] != '-')
+		return (0);
+	s++;
+	while (*s)
+	{
+		if (*s != 'n')
+			return (0);
+		s++;
+	}
+	return (1);
+}
 
-// 	new_line = 1;
-// 	i = 1;
-// 	if (args[1] && ft_strncmp(args[1], "-n", 3) == 0)
-// 	{
-// 		new_line = 0;
-// 		i++;
-// 	}
-// 	while (args[i])
-// 	{
-// 		ft_putstr_fd(args[i], STDOUT_FILENO);
-// 		if (args[i + 1])
-// 			ft_putstr_fd(" ", STDOUT_FILENO);
-// 		i++;
-// 	}
-// 	if (new_line)
-// 		ft_putstr_fd("\n", STDOUT_FILENO);
-// 	return (0);
-// }
+int	echo(char **args)
+{
+	int	i;
+	int	print_new_line;
 
-
-// //cd 
-// int	cd_error(void)
-// {
-// 	print_error_msg("cd", "too many arguments");
-// 	return (EXIT_FAILURE);
-// }
-
-// int	cd(char **args, t_env *minienv)
-// {
-// 	char	*path;
-// 	char	*pwd;
-// 	char	*oldpwd;
-// 	char	cwd[PATH_MAX];
-
-// 	if (args[1] && args[2])
-// 		return (cd_error());
-// 	if (args[1] && !str_equal(args[1], "~"))
-// 		path = args[1];
-// 	else
-// 		path = minienv_value("__HOME", minienv);
-// 	if (chdir(path) != 0)
-// 	{
-// 		print_perror_msg("cd", args[1]);
-// 		return (EXIT_FAILURE);
-// 	}
-// 	pwd = minienv_value("PWD", minienv);
-// 	oldpwd = minienv_value("OLDPWD", minienv);
-// 	if (oldpwd && pwd && *pwd)
-// 		minienv_update("OLDPWD", pwd, minienv);
-// 	if (pwd && *pwd)
-// 		minienv_update("PWD", getcwd(cwd, PATH_MAX), minienv);
-// 	return (EXIT_SUCCESS);
-// }
+	print_new_line = 1;
+	i = 1;
+	while (args[i] && is_minus_n(args[i])) // Skip all initial '-n' options
+	{
+		print_new_line = 0;
+		i++;
+	}
+	while (args[i])
+	{
+		ft_putstr_fd(args[i], STDOUT_FILENO);
+		if (args[i + 1])
+			ft_putstr_fd(" ", STDOUT_FILENO);
+		i++;
+	}
+	if (print_new_line == 1)
+		ft_putstr_fd("\n", STDOUT_FILENO);
+	return (0);
+}
 
 
-// //pwd
-// int	pwd(void)
-// {
-// 	char	cwd[PATH_MAX];
+//cd 
+/*`chdir` 是一个 Unix 系统调用，用于改变当前进程的工作目录。它的原型如下：
+int chdir(const char *path);
+这个函数接受一个参数，即你想要切换到的目录的路径。如果目录切换成功，`chdir` 返回 0。如果目录切换失败（例如，目录不存在，或者你没有权限访问该目录），`chdir` 返回 -1，并设置 `errno` 为相应的错误代码。
+在你提供的 `cd` 函数中，`chdir` 被用来切换到用户指定的目录（存储在 `path` 变量中）。如果目录切换失败，函数打印一个错误消息并返回 `EXIT_FAILURE`。*/
 
-// 	getcwd(cwd, PATH_MAX);
-// 	ft_putstr_fd(cwd, 1);
-// 	ft_putstr_fd("\n", 1);
-// 	return (0);
-// }
+char *cd_path(char **args, t_env *minienv)
+{
+	char *path;
 
-// //exit  prompt里面有写
-// int	fits_in_long_long(char *str)
-// {
-// 	long long	out;
-// 	int			c;
+	if (args[1] == NULL || ft_strncmp(args[1], "~", 2) == 0 || ft_strncmp(args[1], "--", 3) == 0)  //如果是 cd 或者 cd ~ 或者 cd -- 则切换到 HOME 目录
+	{
+		path = minienv_value("HOME", minienv);
+		if (path == NULL)
+		{
+			print_error_msg("cd", "HOME not set");
+			return (NULL);
+		}
+	}
+	else if (ft_strncmp(args[1], "-", 2) == 0) //如果是 cd - 则切换到上一个工作目录 
+	{
+		path = minienv_value("OLDPWD", minienv);
+		if (path == NULL)
+		{
+			print_error_msg("cd", "OLDPWD not set");
+			return (NULL);
+		}
+	}
+	else
+		path = args[1];
+	return (path);
+}
 
-// 	if (ft_strlen(str) > 20)
-// 		return (0);
-// 	if (ft_strncmp(str, "-9223372036854775808", 21) == 0)
-// 		return (1);
-// 	out = 0;
-// 	if (*str == '-' || *str == '+')
-// 		str++;
-// 	while (*str)
-// 	{
-// 		if (*str < '0' || *str > '9')
-// 			return (0);
-// 		c = *str - '0';
-// 		if (out > (LLONG_MAX - c) / 10)
-// 			return (0);
-// 		out = out * 10 + c;
-// 		str++;
-// 	}
-// 	return (1);
-// }
+void  update_env(char *oldpwd, t_env *minienv)
+{
+	char cwd[1024];
 
-// static void	check_args_error(char **args)
-// {
-// 	char	*exit_status;
+	if (getcwd(cwd, 1024) == NULL) //getcwd函数用于获取当前工作目录，它的原型如下 int getcwd(char *buf, size_t size);  size是buf的大小
+	{
+		print_error_msg("cd", "getcwd failed");
+		return ;
+	}
+	minienv_update("OLDPWD", oldpwd, minienv); //把之前保存的pwd工作目录存到OLDPWD
+	minienv_update("PWD", cwd, minienv); //把用getcwd得到的目录存到PWD
+}
 
-// 	if (!args || !args[1])
-// 	{
-// 		if (args)
-// 			free_array(args);
-// 		close_all_fds();
-// 		exit(EXIT_SUCCESS);
-// 	}
-// 	exit_status = args[1];
-// 	if (!fits_in_long_long(exit_status))
-// 	{
-// 		free_array(args);
-// 		exit_with_error("exit", "numeric argument required", BUILTIN_MISUSE);
-// 	}
-// 	if (args[2] != NULL)
-// 	{
-// 		free_array(args);
-// 		exit_with_error("exit", "too many arguments", EXIT_FAILURE);
-// 	}
-// }
+int cd(char **args, t_env *minienv)
+{
+	char *path;
+	char *pwd;
+	char *oldpwd;
 
-// int	builtin_exit(char **args, t_env **minienv)
-// {
-// 	int	exit_status;
+	if (args[1] && args[2])
+	{  // Check if there is more than one argument provided.
+        print_error_msg("cd", "too many arguments");
+        return (EXIT_FAILURE);
+    }
+	path = cd_path(args, minienv);
+	pwd = minienv_value("PWD", minienv);
+	oldpwd = pwd;   // Save the current working directory.
+	if (path == NULL)
+		return (EXIT_FAILURE);
+	if (chdir(path) == -1) // Change the current working directory.
+	{
+		print_error_msg("cd", path);
+		return (EXIT_FAILURE);
+	}
+	if (args[1] && ft_strncmp(args[1], "-", 2) == 0)  //单独处理这个是因为标准的cd -会打印路径
+		ft_putendl_fd(path, STDOUT_FILENO);
+	update_env(oldpwd, minienv);
+	return (EXIT_SUCCESS);
+}
+//pwd
+int	pwd(void)
+{
+	char	pwd[1024];
 
-// 	rl_clear_history();
-// 	free_minienv(minienv);
-// 	ft_putstr_fd("exit\n", STDOUT_FILENO);
-// 	check_args_error(args);
-// 	close_all_fds();
-// 	exit_status = ft_atoll(args[1]);
-// 	free_array(args);
-// 	exit(exit_status);
-// }
+	if (getcwd(pwd, 1024) == NULL)
+	{
+        perror("getcwd failed");  // Properly handle and report the error if getcwd fails
+        return (1);  // Return a non-zero value to indicate failure
+    }
+	ft_putstr_fd(pwd, 1);
+	ft_putstr_fd("\n", 1);
+	return (0);
+}

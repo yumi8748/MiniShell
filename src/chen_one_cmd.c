@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 14:02:31 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/15 16:54:42 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/22 16:20:06 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,9 @@ int handle_outfile_redir(char *cmd, int original_fd[2])
         return (1); // 没有输出重定向，直接返回成功
     file = name_after_redirect(outfile_redir);
 	if (outfile_redir[1] == '>')  // 确定打开文件的标志
-    fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0666); // 追加模式
+    fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644); // 追加模式
 	else
-    fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0666);  // 截断模式
+    fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);  // 截断模式
     if (fd == -1)    // 打开文件失败，打印错误信息
     {
         print_perror_msg("open", file);
@@ -206,11 +206,11 @@ int execute_one_cmd(char *cmd, t_env **minienv)
         free(cmd);
         return (EXIT_FAILURE);
     }
-    args = split_args(cmd);
+    args = split_one_arg(cmd);
     free(cmd);
-   // if (is_builtin(args[0]))
-      //  exit_status = execute_builtin(args, minienv);
-   // else
+    if (is_builtin(args[0]))
+        exit_status = execute_builtin(args, minienv);
+    else
         exit_status = execute_normal_cmd(args, *minienv);
     free_str_array(args);
     if (original_fds[0] != -1)
@@ -236,54 +236,53 @@ int is_builtin(char *cmd)
 		return (1);
 	if (ft_strncmp(cmd, "pwd", 3) == 0 && cmd[3] == '\0')
 		return (1);
-	if (ft_strncmp(cmd, "export", 6) == 0 && cmd[6] == '\0')
-		return (1);
-	if (ft_strncmp(cmd, "unset", 5) == 0 && cmd[5] == '\0')
-		return (1);
-	if (ft_strncmp(cmd, "env", 3) == 0 && cmd[3] == '\0')
-		return (1);
+	//if (ft_strncmp(cmd, "export", 6) == 0 && cmd[6] == '\0')
+	//	return (1);
+	//if (ft_strncmp(cmd, "unset", 5) == 0 && cmd[5] == '\0')
+	//	return (1);
+	//if (ft_strncmp(cmd, "env", 3) == 0 && cmd[3] == '\0')
+	//	return (1);
 	if (ft_strncmp(cmd, "exit", 4) == 0 && cmd[4] == '\0')
 		return (1);	
 	return (0);
 }
 
-// int	execute_builtin(char **args, t_env **minienv)
-// {
-// 	char	*cmd;
-// 	int		exit_status;
+int	execute_builtin(char **args, t_env **minienv)
+{
+	char	*cmd;
+	int		exit_status;
 
-// 	cmd = args[0];
-// 	if (ft_strncmp(cmd, "echo", 4) == 0 && cmd[4] == '\0')
-// 		exit_status = echo(args);
-// 	else if (ft_strncmp(cmd, "pwd", 3) == 0 && cmd[3] == '\0')
-// 		exit_status = pwd();
-// 	else if (ft_strncmp(cmd, "env", 3) == 0 && cmd[3] == '\0')
-// 		exit_status = env(*minienv);
-// 	else if (ft_strncmp(cmd, "export", 6) == 0 && cmd[6] == '\0') 
-// 		exit_status = builtin_export(args, minienv);
-// 	else if (ft_strncmp(cmd, "unset", 5) == 0 && cmd[5] == '\0')
-// 		exit_status = unset(args, minienv);
-// 	else if (ft_strncmp(cmd, "cd", 2) == 0 && cmd[2] == '\0')
-// 		exit_status = cd(args, *minienv);
-// 	else if (ft_strncmp(cmd, "exit", 4) == 0 && cmd[4] == '\0')
-// 		exit_status = builtin_exit(args, minienv);
-// 	else
-// 		exit_status = EXIT_FAILURE;
-// 	return (exit_status);
-// }
+	cmd = args[0];
+	if (ft_strncmp(cmd, "echo", 4) == 0 && cmd[4] == '\0')
+		exit_status = echo(args);
+	else if (ft_strncmp(cmd, "pwd", 3) == 0 && cmd[3] == '\0')
+		exit_status = pwd();
+	// else if (ft_strncmp(cmd, "env", 3) == 0 && cmd[3] == '\0')
+	// 	exit_status = env(*minienv);
+	// else if (ft_strncmp(cmd, "export", 6) == 0 && cmd[6] == '\0') 
+	// 	exit_status = builtin_export(args, minienv);
+	// else if (ft_strncmp(cmd, "unset", 5) == 0 && cmd[5] == '\0')
+	// 	exit_status = unset(args, minienv);
+	else if (ft_strncmp(cmd, "cd", 2) == 0 && cmd[2] == '\0')
+		exit_status = cd(args, *minienv);
+	else if (ft_strncmp(cmd, "exit", 4) == 0 && cmd[4] == '\0')
+		exit_status = shell_exit(args, minienv);
+	else
+		exit_status = EXIT_FAILURE;
+	return (exit_status);
+}
 
 
-char	**split_args(char *cmd)   //这只是分解一个命令的函数 而不是分解包括pipe的多个命令的命令行
+char	**split_one_arg(char *cmd)   //按照空格分解splited_cmd[i]
 {
 	char	**args;
 
-	if (!has_quote(cmd))
-		return (ft_split(cmd, ' '));
-	replace_spaces(cmd, '"');   //处理成对出现的引号 把里面的空格替换成1
-	replace_spaces(cmd, '\'');
+	if (!has_quote(cmd)) 
+		return (ft_split(cmd, ' ')); //如果没有引号 就直接用空格分割
+	replace_inquote_spaces(cmd); //处理成对出现的引号 把里面的空格替换成-1
 	remove_quotes(cmd);  //去掉引号
 	args = ft_split(cmd, ' ');
-	restore_spaces(args); //把1替换成空格 
+	reset_spaces(args); //把1替换成空格 
 	return (args);
 }
 
@@ -298,29 +297,35 @@ int has_quote(char *cmd)
 	return (0);
 }
 
-void replace_spaces(char *cmd, char quote)  //在这段代码中，`cmd[i] = 1;` 是将字符串 `cmd` 中的空格字符（' '）替换为 ASCII 值为 1 的字符。ASCII 值为 1 的字符是一个不可打印的控制字符，名为 "Start of Heading"。
+void replace_inquote_spaces(char *cmd)  //在这段代码中，`cmd[i] = -1;` 是将字符串 `cmd` 中的空格字符（' '）替换为 ASCII 值为 -1 的字符。这样做的目的是为了在后续的代码中，将这些字符作为分隔符来分割字符串。
 {
-	int	i;
+    int i;
+    char quote;
 
     i = 0;
-    while (cmd[i])
+	while (cmd[i])
     {
-        if (cmd[i] == quote)
+        if (cmd[i] == '"' || cmd[i] == '\'')
         {
+            quote = cmd[i];
             i++;
             while (cmd[i] && cmd[i] != quote)
             {
                 if (cmd[i] == ' ')
-                    cmd[i] = 1;
+                    cmd[i] = -1;
                 i++;
             }
-			if (cmd[i])
-				i++;
-		}
+            if (cmd[i])
+                i++;
+        }
         else
+        {
             i++;
+        }
     }
 }
+
+
 
 void	remove_quotes(char *cmd)
 {
@@ -342,7 +347,7 @@ void	remove_quotes(char *cmd)
 	}
 }
 
-void	restore_spaces(char **args)
+void	reset_spaces(char **args)
 {
 	int	i;
 	int	j;
@@ -353,7 +358,7 @@ void	restore_spaces(char **args)
 		j = 0;
 		while (args[i][j])
 		{
-			if (args[i][j] == 1)
+			if (args[i][j] == -1)
 				args[i][j] = ' ';
 			j++;
 		}

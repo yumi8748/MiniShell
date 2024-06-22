@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 16:12:15 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/15 12:43:49 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/22 15:23:41 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	execute_normal_cmd(char **args, t_env *minienv)
 	char **envp;
 
 	cmd = args[0];
-	pid = fork();
-	define_execute_signals(pid);
+	pid = fork();    //和_executet_normal_cmd相比 多了fork
+	define_execute_signals(pid);   //也多了信号处理 和pid的检查
 	if (pid == 0)
 	{
 		if (is_empty(cmd))
@@ -232,7 +232,7 @@ char *find_executable_path(char *cmd, char **splited_paths)
 		}
         if (access(path, F_OK) == 0)  //若存在 返回0
 		{	
-			fprintf(stderr, "Found executable at: %s\n", path);
+			//fprintf(stderr, "Found executable at: %s\n", path);
 			return (path);
 		}
 		//fprintf(stderr, "Executable not found at: %s\n", path); // Log unsuccessful check

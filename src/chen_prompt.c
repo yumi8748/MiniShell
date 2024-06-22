@@ -90,7 +90,7 @@ char	*do_prompt(t_env *minienv)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void	shell_exit(char **args, t_env **minienv)
+int	shell_exit(char **args, t_env **minienv)
 {
 	long long	exit_status;
 
@@ -103,7 +103,20 @@ void	shell_exit(char **args, t_env **minienv)
 		else
 			exit_status = 256 + (exit_status % 256);
 	}
-	clean_up_exit(args, minienv, (int)exit_status, 1);
+	clean_up_resources(minienv, args, 1);
+	exit((int)exit_status);
+}
+
+void clean_up_resources(t_env **minienv, char **args, int flag)
+{
+	if (flag == 1)
+		ft_putstr_fd("exit\n", STDOUT_FILENO);
+	rl_clear_history();
+	if (minienv)
+		free_minienv(minienv);
+	close_all_fds();
+	if (args)
+		free_str_array(args);
 }
 
 void	clean_up_exit(char **args, t_env **minienv, int exit_status, int flag)

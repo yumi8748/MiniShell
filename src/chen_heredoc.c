@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:04:51 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/15 17:58:31 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/22 12:44:26 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,27 +235,27 @@ char *tmp_here_file(int heredoc_ref)  //生成一个临时文件名，用于存�
     return ft_strdup(file);  // 返回 filename 的副本
 }
 
-static int	is_control_c(int status)  //SIGINT：2，中断进程，通常是用户按下 Ctrl+C 时发送的信号
-{
-	return (WTERMSIG(status) == SIGINT); //WTERMSIG 从一个子进程的退出状态中提取出导致其终止的信号号  Unix/Linux 系统上，信号号的范围是从 1 到 64 之间的整数 。
-}
+// static int	is_control_c(int status)  //SIGINT：2，中断进程，通常是用户按下 Ctrl+C 时发送的信号
+// {
+// 	return (WTERMSIG(status) == SIGINT); //WTERMSIG 从一个子进程的退出状态中提取出导致其终止的信号号  Unix/Linux 系统上，信号号的范围是从 1 到 64 之间的整数 。
+// }
 
-static int	is_control_slash(int status) //SIGQUIT：3，退出进程，通常是用户按下 Ctrl+\ 时发送的信号
-{
-	return (WTERMSIG(status) == SIGQUIT);
-}
+// static int	is_control_slash(int status) //SIGQUIT：3，退出进程，通常是用户按下 Ctrl+\ 时发送的信号
+// {
+// 	return (WTERMSIG(status) == SIGQUIT);
+// }
 
-static int	handle_signal_interrupt(int status, int is_last_child)
-{
-	if (is_control_c(status))
-		ft_putstr_fd("\n", STDOUT_FILENO);
-	if (is_control_slash(status) && is_last_child)
-		ft_putstr_fd("Quit\n", STDOUT_FILENO);
-	return (128 + WTERMSIG(status));  //当一个子进程因为接收到一个信号而终止时，它的退出状态会被设置为一个特殊的值，该值是由信号号和一个常量 128 相加得到的
-}
+// static int	handle_signal_interrupt(int status, int is_last_child)
+// {
+// 	if (is_control_c(status))
+// 		ft_putstr_fd("\n", STDOUT_FILENO);
+// 	if (is_control_slash(status) && is_last_child)
+// 		ft_putstr_fd("Quit\n", STDOUT_FILENO);
+// 	return (128 + WTERMSIG(status));  //当一个子进程因为接收到一个信号而终止时，它的退出状态会被设置为一个特殊的值，该值是由信号号和一个常量 128 相加得到的
+// }
 
-/*
-static int handle_signal_interrupt(int status, int is_last_child)
+
+int handle_signal_interrupt(int status, int is_last_child)
 {
     int sig_num;
 	sig_num = WTERMSIG(status);
@@ -265,7 +265,7 @@ static int handle_signal_interrupt(int status, int is_last_child)
         ft_putstr_fd("Quit\n", STDOUT_FILENO);
     }
     return (128 + sig_num);
-}*/
+}
 
 int	wait_for_child(int pid, int is_last_child)
 {
