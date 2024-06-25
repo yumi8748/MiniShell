@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:04:51 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/22 12:44:26 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/25 19:03:37 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,37 +101,43 @@ char *name_after_redirect(char *s)
 {
     int start;
 	int	end;
-	char *delimiter;
+	char *name_after_redirect;
 	char *rest_cmd;
 
-	start = 0;  //实际上s是从第二个<开始的 
-	ft_memmove(s, s + 1, ft_strlen(s + 1) + 1); //s是dest 指向放复制内容的目标数组 s+1指向要复制的数据源的指针 ft_strlen(s + 1) + 1是要复制的字节数 它会从源位置 src 复制 n 个字节到目标位置 des
-    if (s[start] == '>')
+	start = 0; 
+	ft_memmove(s, s + 1, ft_strlen(s + 1) + 1); //删除本来s开头的定向符 s是dest 指向放复制内容的目标数组 s+1指向要复制的数据源的指针 ft_strlen(s + 1) + 1是要复制的字节数 它会从源位置 src 复制 n 个字节到目标位置 des
+    if (s[start] == '>')    //删除了开头定向符的s 如果还是有另外一个> 说明是>> 再次删除
 		ft_memmove(s, s + 1, ft_strlen(s + 1) + 1);
-	while (s[start] == ' ' || s[start] == '\t')
+	while (s[start] == ' ' || s[start] == '\t')  //跳过空格
         start++;
-	end = find_end(s, start);
-	delimiter = ft_substr(&s[start], 0, end);
+	end = find_end(s, start); //找到分隔符的位置 分割符包括空格 > < | \t  这里的s是redirect符号后面的字符串 可能包括空格 start是文件名开始位置
+	name_after_redirect = ft_substr(&s[start], 0, end - start);//从s的start位置0开始截取end长度的字符串
 	rest_cmd = &s[end];
 	ft_memmove(s, rest_cmd, ft_strlen(rest_cmd) + 2);
-    printf("Extracted delimiter: '%s'\n", delimiter);
-	printf("res cmd: '%s'\n", s);
-    return (delimiter);
+   // printf("Extracted delimiter: '%s'\n", name_after_redirect);
+	//printf("res cmd: '%s'\n", s);
+    return (name_after_redirect);
 }
 
-int	find_end(char *s, int start)
+
+/*
+* `<ma"bb|bb"aa`会被处理为`mabb|bbaa`。
+这是因为`find_end`函数会删除引号并跳过引号内的所有内容，直到遇到匹配的引号为止。在这个例子中，`"bb|bb"`被视为一个整体，
+因为它被双引号包围。因此，`|`字符不会被视为分隔符，而是被视为引号内的一部分。因此，`find_end`函数会跳过`|`字符，直到遇到第二个双引号为止。
+*/
+int	find_end(char *s, int start) //找到文件名结束的位置 也就是遇到分割符 分割符包括空格 > < | \t  返回的是分割符的index
 {
 	int	end;
 
 	end = start;
 	while (s[end] && !is_label_delimiter(s[end]))
 	{
-		if (s[end] == '\'')
+		if (s[end] == '\'') //如果是单引号 删除单引号 跳过单引号内的内容 也就是单引号内的内容不作为分割符 遇到单引号结束的位置 再次删除单引号
 		{
-			ft_memmove(&s[end], &s[end] + 1, ft_strlen(&s[end] + 1) + 1);
-			while (s[end] && s[end] != '\'')
+			ft_memmove(&s[end], &s[end] + 1, ft_strlen(&s[end] + 1) + 1); //删除单引号
+			while (s[end] && s[end] != '\'') //找到单引号结束的位置
 				end++;
-			ft_memmove(&s[end], &s[end] + 1, ft_strlen(&s[end] + 1) + 1);
+			ft_memmove(&s[end], &s[end] + 1, ft_strlen(&s[end] + 1) + 1); //删除单引号
 		}
 		else if (s[end] == '\"')
 		{
@@ -193,9 +199,9 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
     char *file;
 
     file = tmp_here_file(heredoc_number);  // 生成临时文件名储存heredoc_ref  /tmp/heredoc-1
-	printf("%s\n",file);
+	//printf("%s\n",file);
 	file_fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);  // 打开该临时文件  0644 作为文件的权限参数，表示创建一个新文件，文件所有者有读写权限，文件所有组和其他用户只有读权限
-    printf("%d\n",file_fd);
+    //printf("%d\n",file_fd);
 	free_str(file);
     while (1)
     {
@@ -205,8 +211,8 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
 			print_error_msg("warning: here-document delimited by end-of-file. Wanted", delimiter);
 			break;
 		}
-		printf("line_read: '%s'\n", line_read);
-        printf("delimiter: '%s'\n", delimiter);
+		//printf("line_read: '%s'\n", line_read);
+       // printf("delimiter: '%s'\n", delimiter);
 		if (ft_strncmp(line_read, delimiter, ft_strlen(delimiter)) == 0 && line_read[ft_strlen(delimiter)] == '\0')
             break;
 		expand_exit_status(&line_read, *exit_status);  // 扩展退出状态
@@ -227,12 +233,12 @@ char *tmp_here_file(int heredoc_ref)  //生成一个临时文件名，用于存�
     char file[30];
     char *here_ref;
 
-	file[0] = '\0';
+	ft_memset(file, 0, 30);  // 将 file 数组的所有元素设置为 0
     here_ref = ft_itoa(heredoc_ref);  // 将 heredoc_number 转换为字符串
     ft_strlcat(file, "/tmp/heredoc", 30);  // 将 "/tmp/heredoc" 拼接到 filename 中
     ft_strlcat(file, here_ref, 30);  // 将 number_str 拼接到 filename 中
     free_str(here_ref);  // 释放 number_str 内存
-    return ft_strdup(file);  // 返回 filename 的副本
+    return (ft_strdup(file));  // 返回 filename 的副本
 }
 
 // static int	is_control_c(int status)  //SIGINT：2，中断进程，通常是用户按下 Ctrl+C 时发送的信号

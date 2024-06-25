@@ -6,13 +6,13 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 14:02:31 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/22 16:20:06 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/25 19:08:57 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-char	get_redir_symbol(char *s)
+char	get_redir_symbol(char *s)  //返回的是具体的定向符号 或者返回-1(<<)
 {
      int	i;
 
@@ -113,7 +113,7 @@ int handle_redirects(char *cmd, int original_fds[2])
 
     original_fds[0] = -1;
     original_fds[1] = -1;
-    redir_symbol= get_redir_symbol(cmd);
+    redir_symbol= get_redir_symbol(cmd); //找到重定向符号ptr
     while (redir_symbol != 0)
     {
         if (redir_symbol== '<')
@@ -172,6 +172,7 @@ void	redirect_heredoc(char *cmd, int heredoc_ref)
 	here_symbol = find_here_symbol(cmd);
 	file = tmp_here_file(heredoc_ref);
 	file_fd = open(file, O_RDONLY);
+	ft_putnbr_fd(file_fd, 2);
 	if (file_fd == -1)
 	{
 		print_perror_msg("open", file);
