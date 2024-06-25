@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 15:52:51 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/22 17:12:58 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/24 17:34:39 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ int	execute_multi_cmds(char **splited_cmds, t_env **minienv)
 	pid_array = init_pid_array(splited_cmds);	
 	while (splited_cmds[i] != NULL)
 	{
+		printf("inside execute_multi_cmds, before handle pipe\n");
 		handle_pipe(splited_cmds, i, original_fd);
+		printf("inside execute_multi_cmds, while loop\n");
 		pid_array[i] = fork();
 		define_execute_signals(pid_array[i]);
 		if (pid_array[i] == -1)
@@ -36,6 +38,8 @@ int	execute_multi_cmds(char **splited_cmds, t_env **minienv)
 			printf("here1\n");
 			_execute_cmd(splited_cmds[i], splited_cmds, minienv);
 		}
+		else	
+			close(STDERR_FILENO);
 		i++;
 	}
 	dup2(original_fd[0], STDIN_FILENO);
@@ -45,32 +49,33 @@ int	execute_multi_cmds(char **splited_cmds, t_env **minienv)
 	return (wait_for_children(pid_array, splited_cmds));
 }
 
-void    handle_pipe(char **splited_cmds, int i, int original_fd[2])
+void handle_pipe(char **splited_cmds, int i, int original_fd[2])
 {
-	static int		pipefd[2];
+    int pipefd[2];
 
-		if (i == 0)
-		{
-			if (pipe(pipefd) == -1)
-				print_error_msg("pipe", splited_cmds[i]);
-			dup2(pipefd[1], STDOUT_FILENO);
-			close(pipefd[1]);
-		}
-		else if (i < str_strlen(splited_cmds) - 2 && i > 0)
-		{
-			if (pipe(pipefd) == -1)
-				print_error_msg("pipe", splited_cmds[i]);
-			dup2(pipefd[0], STDIN_FILENO);
-			dup2(pipefd[1], STDOUT_FILENO);
-			close(pipefd[0]);
-			close(pipefd[1]);
-		}
-		else
-		{
-			dup2(original_fd[1], STDIN_FILENO);
-			close(original_fd[0]);
-			close(original_fd[1]);
-		}
+    if (i == 0)
+    {
+        if (pipe(pipefd) == -1)
+            print_error_msg("pipe", splited_cmds[i]);
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]);
+    }
+    else if (i < str_strlen(splited_cmds) - 1)
+    {
+        dup2(pipefd[0], STDIN_FILENO);
+        close(pipefd[0]);
+        if (pipe(pipefd) == -1)
+            print_error_msg("pipe", splited_cmds[i]);
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]);
+    }
+    else
+    {
+        dup2(pipefd[0], STDIN_FILENO);
+        close(pipefd[0]);
+        dup2(original_fd[1], STDOUT_FILENO);
+        close(original_fd[1]);
+    }
 }
 
 int str_strlen(char **splited_cmds)
@@ -159,7 +164,7 @@ void _handle_redirects(char *cmd, char **splited_cmds, t_env **minienv)  //cmd�
 				
 }
 
-
+/*
 int	_handle_infile_redir(char *command) //处理< 输入重定向 打开infile文件 没有修改command的值
 {
 	char	*infile_redir;
@@ -214,7 +219,62 @@ int	_handle_outfile_redir(char *command) //处理> 输出重定向 打开outfile
 	free(file);
 	return (1);
 }
+*/
 
+int _handle_infile_redir(char *command) // 处理 < 输入重定向
+{
+    char *infile_redir;
+    char *file;
+    int fd;
+
+    infile_redir = find_redir_pos(command, '<'); // 找到 < 符号的位置
+    if (!infile_redir)
+        return 1;
+    file = name_after_redirect(infile_redir); // 找到文件名的位置
+    fd = open(file, O_RDONLY, FD_CLOEXEC); // 打开文件
+    if (fd == -1)
+    {
+        print_perror_msg("open", file);
+        free(file);
+        return 0;
+    }
+    else
+    {
+        dup2(fd, STDIN_FILENO); // 将文件描述符复制到 stdin
+        close(fd);
+    }
+    free(file);
+    return 1;
+}
+
+int _handle_outfile_redir(char *command) // 处理 > 输出重定向
+{
+    char *outfile_redir;
+    char *file;
+    int fd;
+
+    outfile_redir = find_redir_pos(command, '>'); // 找到 > 符号的位置
+    if (!outfile_redir)
+        return 1;
+    file = name_after_redirect(outfile_redir); // 找到文件名的位置
+    if (outfile_redir[1] == '>') // 如果符号是 >> 表示追加重定向
+        fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    else
+        fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd == -1)
+    {
+        print_perror_msg("open", file);
+        free(file);
+        return 0;
+    }
+    else
+    {
+        dup2(fd, STDOUT_FILENO); // 将文件描述符复制到 stdout
+        close(fd);
+    }
+    free(file);
+    return 1;
+}
 void	_execute_cmd(char *cmd, char **cmds, t_env **minienv) //cmd是splited_cmds[i] 也就是按照|分割的每个还未处理成可执行的命令 cmds是splited_cmds
 {
 	char	**args;
