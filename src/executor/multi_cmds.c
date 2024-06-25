@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 15:52:51 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/24 17:34:39 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/25 19:04:31 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ int	execute_multi_cmds(char **splited_cmds, t_env **minienv)
 	pid_array = init_pid_array(splited_cmds);	
 	while (splited_cmds[i] != NULL)
 	{
-		printf("inside execute_multi_cmds, before handle pipe\n");
+		//printf("inside execute_multi_cmds, before handle pipe\n");
 		handle_pipe(splited_cmds, i, original_fd);
-		printf("inside execute_multi_cmds, while loop\n");
+		//printf("inside execute_multi_cmds, while loop\n");
 		pid_array[i] = fork();
 		define_execute_signals(pid_array[i]);
 		if (pid_array[i] == -1)
@@ -35,11 +35,9 @@ int	execute_multi_cmds(char **splited_cmds, t_env **minienv)
 		{
 			free(pid_array);   //在子进程中释放pid_array 不影响父进程的pid_array
 			_handle_redirects(splited_cmds[i], splited_cmds, minienv); //处理重定向种类 打开文件 
-			printf("here1\n");
+			//printf("here1\n");
 			_execute_cmd(splited_cmds[i], splited_cmds, minienv);
 		}
-		else	
-			close(STDERR_FILENO);
 		i++;
 	}
 	dup2(original_fd[0], STDIN_FILENO);
@@ -51,16 +49,16 @@ int	execute_multi_cmds(char **splited_cmds, t_env **minienv)
 
 void handle_pipe(char **splited_cmds, int i, int original_fd[2])
 {
-    int pipefd[2];
+    static int pipefd[2];
 
-    if (i == 0)
+    if (i == 0) //如果`i`等于0，这意味着这是管道操作的第一个命令。函数创建一个新的管道，并将标准输出（STDOUT）重定向到管道的写端。
     {
         if (pipe(pipefd) == -1)
             print_error_msg("pipe", splited_cmds[i]);
         dup2(pipefd[1], STDOUT_FILENO);
         close(pipefd[1]);
     }
-    else if (i < str_strlen(splited_cmds) - 1)
+    else if (i < str_strlen(splited_cmds) - 1) //如果`i`小于`splited_cmds`的长度减1，这意味着这是管道操作的中间命令。先将上一个命令的管道读端复制到标准输入（STDIN），然后创建一个新的管道，并将标准输出（STDOUT）重定向到管道的写端。
     {
         dup2(pipefd[0], STDIN_FILENO);
         close(pipefd[0]);
@@ -69,7 +67,7 @@ void handle_pipe(char **splited_cmds, int i, int original_fd[2])
         dup2(pipefd[1], STDOUT_FILENO);
         close(pipefd[1]);
     }
-    else
+    else //如果`i`等于`splited_cmds`的长度减1，这意味着这是管道操作的最后一个命令。将上一个命令的管道读端复制到标准输入（STDIN），然后将标准输出（STDOUT）重定向到原始的标准输出（STDOUT）。
     {
         dup2(pipefd[0], STDIN_FILENO);
         close(pipefd[0]);
@@ -149,30 +147,30 @@ void _handle_redirects(char *cmd, char **splited_cmds, t_env **minienv)  //cmd�
     {
         if (redir_symbol== '<')
         {
-			if (_handle_infile_redir(cmd) == 0)
+			if (_handle_infile_redir(cmd) == 0) //返回0表示打开文件失败
 				clean_exit(splited_cmds, minienv);
 		}
 		else if (redir_symbol == '>')
 		{
-			if (_handle_outfile_redir(cmd) == 0)
+			if (_handle_outfile_redir(cmd) == 0)   //返回0表示打开文件失败
 			    clean_exit(splited_cmds, minienv);
 		}
-		else if (redir_symbol < 0)
+		else if (redir_symbol == -1)
 			redirect_heredoc(cmd, redir_symbol);
 		redir_symbol= get_redir_symbol(cmd);
 	}
 				
 }
 
-/*
-int	_handle_infile_redir(char *command) //处理< 输入重定向 打开infile文件 没有修改command的值
+
+int	_handle_infile_redir(char *command) //处理< 输入重定向 打开infile文件 没有修改command的值  成功返回1 失败返回0
 {
 	char	*infile_redir;
 	char	*file;
 	int		fd;
 
 	infile_redir = find_redir_pos(command, '<'); //找到<符号的位置ptr
-	if (!infile_redir)
+	if (!infile_redir)  //返回NULL说明没有<符号  但其实既然调用了这个函数说明一定有<符号
 		return (1);
 	file= name_after_redirect(infile_redir); //找到文件名的位置ptr
 	fd = open(file, O_RDONLY, FD_CLOEXEC); //打开文件
@@ -196,15 +194,26 @@ int	_handle_outfile_redir(char *command) //处理> 输出重定向 打开outfile
 	char	*outfile_redir;
 	char	*file;
 	int		fd;
+	int      append;
 	
 	outfile_redir = find_redir_pos(command, '>');
 	if (!outfile_redir)
 		return (1);
-	file = name_after_redirect(outfile_redir); //找到文件名的位置ptr
-	if (outfile_redir[1] == '>')  //如果符号是>> 则表示追加重定向
-		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (outfile_redir[1] == '>')
+		append = 1;
 	else
+		append = 0;
+	file = name_after_redirect(outfile_redir); //找到文件名的位置ptr
+	if (append == 1)  //如果符号是>> 则表示追加重定向
+	{
+		//printf("redir:>>append\n");
+		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	}
+	else
+	{
+		//printf("redir> trunc\n");
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	}
 	if (fd == -1)
 	{
 		print_perror_msg("open", file);
@@ -219,77 +228,22 @@ int	_handle_outfile_redir(char *command) //处理> 输出重定向 打开outfile
 	free(file);
 	return (1);
 }
-*/
 
-int _handle_infile_redir(char *command) // 处理 < 输入重定向
-{
-    char *infile_redir;
-    char *file;
-    int fd;
-
-    infile_redir = find_redir_pos(command, '<'); // 找到 < 符号的位置
-    if (!infile_redir)
-        return 1;
-    file = name_after_redirect(infile_redir); // 找到文件名的位置
-    fd = open(file, O_RDONLY, FD_CLOEXEC); // 打开文件
-    if (fd == -1)
-    {
-        print_perror_msg("open", file);
-        free(file);
-        return 0;
-    }
-    else
-    {
-        dup2(fd, STDIN_FILENO); // 将文件描述符复制到 stdin
-        close(fd);
-    }
-    free(file);
-    return 1;
-}
-
-int _handle_outfile_redir(char *command) // 处理 > 输出重定向
-{
-    char *outfile_redir;
-    char *file;
-    int fd;
-
-    outfile_redir = find_redir_pos(command, '>'); // 找到 > 符号的位置
-    if (!outfile_redir)
-        return 1;
-    file = name_after_redirect(outfile_redir); // 找到文件名的位置
-    if (outfile_redir[1] == '>') // 如果符号是 >> 表示追加重定向
-        fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-    else
-        fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd == -1)
-    {
-        print_perror_msg("open", file);
-        free(file);
-        return 0;
-    }
-    else
-    {
-        dup2(fd, STDOUT_FILENO); // 将文件描述符复制到 stdout
-        close(fd);
-    }
-    free(file);
-    return 1;
-}
 void	_execute_cmd(char *cmd, char **cmds, t_env **minienv) //cmd是splited_cmds[i] 也就是按照|分割的每个还未处理成可执行的命令 cmds是splited_cmds
 {
 	char	**args;
 
-	printf("here\n");
+	//printf("here\n");
 	close_extra_fds();
 	printf("%s\n", cmd);
 	args = split_one_arg(cmd);
 	printf("args[0]:%s\n", args[0]);
 	printf("args[1]:%s\n", args[1]);
+	free_str_array(cmds);
 	if (is_builtin(args[0]))
 		_execute_builtin(args, minienv);
 	else
 		_execute_normal_cmd(args, *minienv);
-	free_str_array(cmds);
 }
 
 
