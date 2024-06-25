@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 14:39:19 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/15 18:44:10 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/24 14:32:11 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	define_execute_signals(int child_pid);
 char	*value_only(char *key_pair);
 char	*minienv_value(char *name, t_env *minienv);
 t_env	*minienv_node(char *name, t_env *minienv);
+void minienv_update(char *key, char *value, t_env *minienv);
 
 //init.c          yu 
 t_env	*init_minienv(char **env);
@@ -73,9 +74,9 @@ int	is_invalid_token(char c);
 int	unexpected_token(char *input);
 
 //cmd_utils.c        yu
-void	restore_pipes(char **split_cmds);
-void	replace_pipes(char *str, char delimeter);
-char	**split_cmds(char *cmds);
+void	reset_inquote_pipe(char **splited_cmds);
+void	replace_inquote_pipe(char *s);
+char	**split_all_cmds(char *cmd_line);
 
 //input_errors.c
 int	print_unclosedquote_err(void);
@@ -93,7 +94,7 @@ int	is_invalid_syntax(char *str);
 // chen_prompt.c       leo
 char	*prompt_msg(t_env *minienv);
 char	*do_prompt(t_env *minienv);
-void	shell_exit(char **args, t_env **minienv);
+int	shell_exit(char **args, t_env **minienv);
 void	free_minienv(t_env **minienv);
 void	check_args_error(char **args);
 void	print_error_msg(char *command, char *msg);
@@ -103,7 +104,7 @@ void	close_extra_fds(void);
 void	close_all_fds(void);
 int	str_to_ll(char *s, long long *nb);
 void	clean_up_exit(char **args, t_env **minienv, int exit_status, int flag);
-
+void clean_up_resources(t_env **minienv, char **args, int flag);
 
 //chen_heredoc.c        leo
 int handle_heredoc(char *input, int *exit_status, t_env *minienv);
@@ -122,6 +123,8 @@ int	wait_for_child(int pid, int is_last_child);
  int	is_valid_varchar(char c);
 int	varname_size(char *s);
 char	*find_var_pos(char *input);
+void var_at_start(char **input, char *var_value, char *after_var);
+void	var_not_at_start(char **input, char *var_value, char *after_var, char *pos);
 void	update_input(char **input, char *var_value, char *after_var);
 void	expand_variables(char **input, t_env *minienv);
 void	handle_expansions(char **input, t_env *minienv, int exit_status);
@@ -143,11 +146,11 @@ void	redirect_heredoc(char *cmd, int heredoc_ref);
 int execute_one_cmd(char *cmd, t_env **minienv);
 int is_builtin(char *cmd);
 int	execute_builtin(char **args, t_env **minienv);
-char	**split_args(char *cmd);
+char	**split_one_arg(char *cmd);
 int has_quote(char *cmd);
-void replace_spaces(char *cmd, char quote);
+void replace_inquote_spaces(char *cmd);
 void	remove_quotes(char *cmd);
-void	restore_spaces(char **args);
+void	reset_spaces(char **args);
 int	has_pipe(char *s);
 
 
@@ -166,7 +169,28 @@ char *find_executable_path(char *cmd, char **splited_paths);
 
 
 
+// chen_builtin.c      leo
+int is_minus_n(char *s);
+int	echo(char **args);
+char *cd_path(char **args, t_env *minienv);
+void  update_env(char *oldpwd, t_env *minienv);
+int cd(char **args, t_env *minienv);
+int	pwd(void);
 
+
+// multi_cmds.c   yu leo
+int	execute_multi_cmds(char **splited_cmds, t_env **minienv);
+void    handle_pipe(char **splited_cmds, int i, int original_fd[2]);
+int str_strlen(char **splited_cmds);
+int  *init_pid_array(char **splited_cmds);
+int wait_for_children(int *pid_array, char **splited_cmds);
+void clean_exit(char **splited_cmds, t_env **minienv);
+void _handle_redirects(char *cmd, char **splited_cmds, t_env **minienv); 
+int	_handle_infile_redir(char *command);
+int	_handle_outfile_redir(char *command);
+void	_execute_cmd(char *cmd, char **cmds, t_env **minienv);
+int	_execute_builtin(char **args, t_env **minienv);
+int	_execute_normal_cmd(char **args, t_env *minienv);
 
 char *extract_delimiter(char *s, int start);
 void	free_str(char *s);
