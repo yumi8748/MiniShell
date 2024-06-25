@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 16:12:15 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/22 15:23:41 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/24 14:33:32 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,9 +192,7 @@ char *get_path_from_env(char *cmd, t_env *minienv)
 	char *path_line;
 	char **splited_paths;
 	char *path;
-	int i;	
 
-	i = 0;
 	path_line = minienv_value("PATH", minienv);
 	if (!path_line)
 		return (NULL);
