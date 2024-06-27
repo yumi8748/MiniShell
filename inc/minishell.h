@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 14:39:19 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/24 14:32:11 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/26 17:25:17 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ void	define_execute_signals(int child_pid);
 
 
 //minienv_utils.c      yu
-char	*value_only(char *key_pair);
+char	*get_value(char *key_pair);
 char	*minienv_value(char *name, t_env *minienv);
-t_env	*minienv_node(char *name, t_env *minienv);
+t_env	*find_node(char *name, t_env *minienv);
 void minienv_update(char *key, char *value, t_env *minienv);
 
 //init.c          yu 
@@ -109,7 +109,7 @@ void clean_up_resources(t_env **minienv, char **args, int flag);
 //chen_heredoc.c        leo
 int handle_heredoc(char *input, int *exit_status, t_env *minienv);
 int skip_quotes(char *s, int i, char quote_type);
-char *find_here_symbol(char *str);
+char *find_here_pos(char *str);
 int find_end(char *s, int start);
 char *name_after_redirect(char *s);
 int	is_label_delimiter(char c);
@@ -177,6 +177,8 @@ void  update_env(char *oldpwd, t_env *minienv);
 int cd(char **args, t_env *minienv);
 int	pwd(void);
 
+//builtins 
+int ft_env(t_env *minienv);
 
 // multi_cmds.c   yu leo
 int	execute_multi_cmds(char **splited_cmds, t_env **minienv);
