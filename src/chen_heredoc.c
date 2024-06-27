@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:04:51 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/25 19:03:37 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/26 15:22:13 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,28 +37,29 @@ leochen@paul-f3Ar4s1:/sgoinfre/goinfre/Perso/leochen/minishell_$ <<"$?"
 int handle_heredoc(char *input, int *exit_status, t_env *minienv)
 {
     static int heredoc_ref;
-    char *here_symbol;
+    char *here_symbol_ptr;
     char *delimiter;
 	
 
     // 初始化 heredoc_ref
     heredoc_ref = 0;
     // 循环查找和处理每个 heredoc
-    while ((here_symbol = find_here_symbol(input)) != NULL)
+    while ((here_symbol_ptr = find_here_pos(input)) != NULL)
     {
         heredoc_ref--; // 每次找到 heredoc 标志时递减编号
-		here_symbol ++;  //跳过第一个<
+		*here_symbol_ptr = heredoc_ref; //用heredoc标识符 代替第一个< 也就是<<lim 里面的lim旁边的< 为的是execute后再次redir_heredoc时不会再次找到单独的<从而进行错误的redir 因为那时cmd已经被处理过了 只剩下cat< 也就是替换后的cat-1
+		here_symbol_ptr ++;  //跳过第一个<
         // 获取 heredoc 的分隔符名称
-        delimiter = name_after_redirect(here_symbol);  //这里传入的heresymbol其实是从第二个<开始的
+        delimiter = name_after_redirect(here_symbol_ptr);  //这里传入的heresymbol其实是从第二个<开始的
         // 执行 heredoc 处理
-        if (!exec_heredoc(delimiter, heredoc_ref, exit_status, minienv))
+        printf("input:%s\n", input);
+		if (!exec_heredoc(delimiter, heredoc_ref, exit_status, minienv))
         {
             free_str(delimiter); // 如果执行失败，释放内存并返回失败
             return (0);
         }
         free_str(delimiter); // 释放内存
     }
-
     return (1); // 成功处理所有 heredoc，返回成功
 }
 
@@ -73,7 +74,7 @@ int skip_quotes(char *s, int i, char quote_type)
 	return (i);
 }
 
-char *find_here_symbol(char *str)
+char *find_here_pos(char *str)
 {
     int i;
 
@@ -199,9 +200,8 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
     char *file;
 
     file = tmp_here_file(heredoc_number);  // 生成临时文件名储存heredoc_ref  /tmp/heredoc-1
-	//printf("%s\n",file);
 	file_fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);  // 打开该临时文件  0644 作为文件的权限参数，表示创建一个新文件，文件所有者有读写权限，文件所有组和其他用户只有读权限
-    //printf("%d\n",file_fd);
+    printf("heredoc file:%s, fd=%d\n", file, file_fd);
 	free_str(file);
     while (1)
     {
@@ -216,7 +216,7 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
 		if (ft_strncmp(line_read, delimiter, ft_strlen(delimiter)) == 0 && line_read[ft_strlen(delimiter)] == '\0')
             break;
 		expand_exit_status(&line_read, *exit_status);  // 扩展退出状态
-       // expand_variables(&line_read, minienv);  // 扩展变量
+    	expand_variables(&line_read, minienv);  // 扩展变量
         ft_putendl_fd(line_read, file_fd);  // 写入临时文件
         free_str(line_read); //readline 函数会自动分配内存来存储用户输入的字符串，因此在使用完这块内存后，我们需要使用 free 函数将其释放
     }

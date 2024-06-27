@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 14:02:31 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/25 19:08:57 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/26 15:35:48 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	get_redir_symbol(char *s)  //返回的是具体的定向符号 或者返回
             skip_quotes(s, i, s[i]);
         if (s[i] == '<' && s[i+1] == '<') // check for '<<'
             return (-1); // return -1 for '<<'
-        else if (s[i] == '<' || s[i] == '>')
+        else if (s[i] == '<' || s[i] == '>' || s[i] < 0)
              return (s[i]);
         i++;
      }
@@ -114,7 +114,8 @@ int handle_redirects(char *cmd, int original_fds[2])
     original_fds[0] = -1;
     original_fds[1] = -1;
     redir_symbol= get_redir_symbol(cmd); //找到重定向符号ptr
-    while (redir_symbol != 0)
+    printf("command after heredoc but before redir:%s\n", cmd);
+	while (redir_symbol != 0)
     {
         if (redir_symbol== '<')
         {
@@ -167,12 +168,13 @@ void	redirect_heredoc(char *cmd, int heredoc_ref)
 {
 	char *file;
 	int	file_fd;
-	char *here_symbol;
+	char *here_pos;
 
-	here_symbol = find_here_symbol(cmd);
+	here_pos = find_redir_pos(cmd, heredoc_ref);
 	file = tmp_here_file(heredoc_ref);
+	printf("redirect heredoc file:%s\n", file);
 	file_fd = open(file, O_RDONLY);
-	ft_putnbr_fd(file_fd, 2);
+	printf("file_fd:%d\n", file_fd);
 	if (file_fd == -1)
 	{
 		print_perror_msg("open", file);
@@ -182,7 +184,7 @@ void	redirect_heredoc(char *cmd, int heredoc_ref)
 	free(file);
 	dup2(file_fd, STDIN_FILENO);
 	close(file_fd);
-	ft_memmove(here_symbol, here_symbol + 1, ft_strlen(here_symbol + 1) + 1);
+	ft_memmove(here_pos, here_pos + 1, ft_strlen(here_pos + 1) + 1);
 }
 
 
@@ -207,7 +209,9 @@ int execute_one_cmd(char *cmd, t_env **minienv)
         free(cmd);
         return (EXIT_FAILURE);
     }
-    args = split_one_arg(cmd);
+    printf("command before split args:%s\n", cmd);
+	args = split_one_arg(cmd);
+	printf("args[0] after split:%s\n", args[0]);
     free(cmd);
     if (is_builtin(args[0]))
         exit_status = execute_builtin(args, minienv);
