@@ -9,8 +9,8 @@
 /*   Updated: 2024/06/18 16:16:07 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-/*
-#include "../inc/minishell.h"
+
+#include "../../inc/minishell.h"
 
 static void	minienv_del_next_node(t_env **node)
 {
@@ -61,4 +61,4 @@ int	builtin_unset(char **argv, t_env **minienv)
 		argv++;
 	}
 	return (EXIT_SUCCESS);
-}*/
+}
