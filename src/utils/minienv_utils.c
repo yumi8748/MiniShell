@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 13:37:20 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/27 13:20:15 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/27 17:58:11 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,26 +82,4 @@ char *create_keypair(char *key,  char *value)
     return (keypair);
 }
 
-void minienv_update(char *key, char *value, t_env *minienv) //根据提供的key和value更新环境变量链表minienv
-{
-    t_env *i;
-    char *new_keypair;
-	
-	i = find_node(key, minienv); //找到key对应的node
-	new_keypair = create_keypair(key, value);  //根据key和value创建一个新的环境变量字符串
-	if (!new_keypair)
-		return ;
-    if (!i) // 如果key对应的node不存在 则将新的环境变量字符串加入到环境变量链表minienv中
-	{ 
-        if (new_keypair)
-        {
-			list_append(new_keypair, &minienv); //把新的key_pair加入到minienv链表中
-			free(new_keypair); //释放new_keypair
-		}
-	}
-	else // 如果key对应的node存在 则更新node的value
-	{ 
-        free(i->key_pair); //把原来的key_pair释放掉
-        i->key_pair = new_keypair; //把新的key_pair赋值给node
-	}
-}
+
