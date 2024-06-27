@@ -1,27 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   pwd .c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/27 14:03:44 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/27 16:03:31 by leochen          ###   ########.fr       */
+/*   Created: 2024/06/06 14:16:11 by leochen           #+#    #+#             */
+/*   Updated: 2024/06/27 14:48:15 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-int env(t_env *minienv)
+int	ft_pwd(void)
 {
-	t_env	*i;
+	char	pwd[1024];
 
-	i = minienv;
-	while (i)
+	if (getcwd(pwd, 1024) == NULL)
 	{
-		if (ft_strchr(i->key_pair, '='))
-			ft_putendl_fd(i->key_pair, STDOUT_FILENO);
-		i = i->next;
-	}
+        perror("getcwd failed");  // Properly handle and report the error if getcwd fails
+        return (1);  // Return a non-zero value to indicate failure
+    }
+	ft_putstr_fd(pwd, 1);
+	ft_putstr_fd("\n", 1);
 	return (0);
 }

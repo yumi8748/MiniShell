@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_unset.c                                    :+:      :+:    :+:   */
+/*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/17 16:19:38 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/18 16:16:07 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/27 16:02:31 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	remove_from_minienv(char *varname, t_env **minienv)
 	}
 }
 
-int	builtin_unset(char **argv, t_env **minienv)
+int	unset(char **argv, t_env **minienv)
 {
 	char	*varname;
 
