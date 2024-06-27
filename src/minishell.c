@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 13:24:29 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/22 13:17:12 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/27 18:44:31 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int	minishell(t_env *minienv)
 	int		exit_status;
 	char	*input;
 	char **splited_cmds;
-
 
 	exit_status = EXIT_SUCCESS;
 	while (1)
