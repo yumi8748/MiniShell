@@ -13,3 +13,4 @@ to do:
 - [ ] norme
 - [ ] test.sh 里面的case
 - [ ] tester
+- [ ] evaluation sheet一一測試
