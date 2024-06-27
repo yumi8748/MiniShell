@@ -6,7 +6,7 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 14:39:19 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/26 17:25:17 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/27 18:48:56 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,22 +43,23 @@
 # define FALSE 0
 
 
-//signals.c        yu
+//signals.c 
 void	define_main_signals(void);
-//leo加上如下
 void	define_heredoc_signals(int child_pid);
 void	define_execute_signals(int child_pid);
-
+int handle_signal_interrupt(int status, int is_last_child);
 
 //minienv_utils.c      yu
 char	*get_value(char *key_pair);
 char	*minienv_value(char *name, t_env *minienv);
 t_env	*find_node(char *name, t_env *minienv);
 void minienv_update(char *key, char *value, t_env *minienv);
+char *get_key(char *keypair);
 
 //init.c          yu 
 t_env	*init_minienv(char **env);
 void	list_append(char *key_pair, t_env **list);
+char *create_keypair(char *key,  char *value);
 
 int	minishell(t_env *minienv);
 
@@ -119,7 +120,7 @@ char *tmp_here_file(int heredoc_ref);
 int	wait_for_child(int pid, int is_last_child);
 
 //handle_expansions.c     yu
-
+int is_valid_varname(char *s);
  int	is_valid_varchar(char c);
 int	varname_size(char *s);
 char	*find_var_pos(char *input);
@@ -173,12 +174,14 @@ char *find_executable_path(char *cmd, char **splited_paths);
 int is_minus_n(char *s);
 int	echo(char **args);
 char *cd_path(char **args, t_env *minienv);
-void  update_env(char *oldpwd, t_env *minienv);
 int cd(char **args, t_env *minienv);
-int	pwd(void);
+int	ft_pwd(void);
 
 //builtins 
-int ft_env(t_env *minienv);
+int	unset(char **argv, t_env **minienv);
+int env(t_env *minienv);
+int builtin_export(char **args, t_env **minienv);
+int	builtin_unset(char **argv, t_env **minienv);
 
 // multi_cmds.c   yu leo
 int	execute_multi_cmds(char **splited_cmds, t_env **minienv);
