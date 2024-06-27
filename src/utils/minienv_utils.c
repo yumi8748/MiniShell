@@ -6,23 +6,36 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 13:37:20 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/27 12:54:27 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/27 13:20:15 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-char	*get_value(char *key_pair)
+char	*get_value(char *keypair)
 {
 	int	i;
 
 	i = 0;
-	while (key_pair[i] && key_pair[i] != '=')
+	while (keypair[i] && keypair[i] != '=')
 		i++;
-	if (!key_pair[i])
+	if (!keypair[i])
 		return (NULL);
-	return (&key_pair[i + 1]);
+	return (&keypair[i + 1]);
 }
+
+char *get_key(char *keypair)
+{
+	int	i;
+
+	i = 0;
+	while (keypair[i] && keypair[i] != '=')
+		i++;
+	if (!keypair[i])
+		return (NULL);
+	return (ft_substr(keypair, 0, i));
+}
+
 
 char	*minienv_value(char *key, t_env *minienv)
 {
