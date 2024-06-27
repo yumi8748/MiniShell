@@ -9,7 +9,7 @@ to do:
 3. **算术扩展**：形如`$((expression))`的表达式会被替换为expression的计算结果。
 
 
-[ ] expand variable  添加 {}  ()  算术扩展？
-[ ] norme
-[ ] test.sh 里面的case
-[ ] tester
+- [ ] expand variable  添加 {}  ()  算术扩展？
+- [ ] norme
+- [ ] test.sh 里面的case
+- [ ] tester
