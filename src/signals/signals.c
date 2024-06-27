@@ -6,11 +6,11 @@
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 14:29:46 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/21 17:57:53 by leochen          ###   ########.fr       */
+/*   Updated: 2024/06/27 18:44:35 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/minishell.h"
 
 // struct sigaction 结构体用于描述信号处理程序的行为。它包含以下成员：
 
@@ -83,4 +83,16 @@ void	define_execute_signals(int child_pid)
 		sa.sa_handler = SIG_IGN;
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGQUIT, &sa, NULL);
+}
+
+int handle_signal_interrupt(int status, int is_last_child)
+{
+    int sig_num;
+	sig_num = WTERMSIG(status);
+    if (sig_num == SIGINT) {
+        ft_putstr_fd("\n", STDOUT_FILENO);
+    } else if (sig_num == SIGQUIT && is_last_child) {
+        ft_putstr_fd("Quit\n", STDOUT_FILENO);
+    }
+    return (128 + sig_num);
 }
