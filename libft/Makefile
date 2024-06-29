@@ -1,100 +1,30 @@
-NAME			= libft.a
+SRCS = ft_atoi.c     ft_isprint.c       ft_lstlast.c  ft_memmove.c     ft_split.c     ft_strlen.c   ft_tolower.c     print_p.c \
+ft_bzero.c    ft_itoa.c          ft_lstmap.c   ft_memset.c      ft_strchr.c    ft_strmapi.c  ft_toupper.c     print_s.c \
+ft_calloc.c   ft_lstadd_back.c   ft_lstnew.c   ft_printf.c      ft_strdup.c    ft_strncmp.c  get_next_line.c  print_u.c \
+ft_isalnum.c  ft_lstadd_front.c  ft_lstsize.c  ft_putchar_fd.c  ft_striteri.c  ft_strnstr.c  print_x.c \
+ft_isalpha.c  ft_lstclear.c      ft_memchr.c   ft_putendl_fd.c  ft_strjoin.c   ft_strrchr.c  ft_isspace.c\
+ft_isascii.c  ft_lstdelone.c     ft_memcmp.c   ft_putnbr_fd.c   ft_strlcat.c   ft_strtrim.c  print_c.c \
+ft_isdigit.c  ft_lstiter.c       ft_memcpy.c   ft_putstr_fd.c   ft_strlcpy.c   ft_substr.c   print_d.c \
 
-INC				= inc/
-SRC_DIR			= srcs/
-OBJ_DIR			= obj/
+OBJS = ${SRCS:.c=.o}
+NAME = libft.a
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
 
-CC				= cc
-CFLAGS			= -Wall -Wextra -Werror -I
-RM				= rm -f
-AR				= ar rcs
+%.o: %.c
+	${CC} ${CFLAGS} -c $< -o $@
 
-FTIS_DIR		=	$(SRC_DIR)ft_is/ft_isalnum.c \
-					$(SRC_DIR)ft_is/ft_isalpha.c \
-					$(SRC_DIR)ft_is/ft_isascii.c \
-					$(SRC_DIR)ft_is/ft_isdigit.c \
-					$(SRC_DIR)ft_is/ft_isprint.c \
-					$(SRC_DIR)ft_is/ft_max.c \
-					$(SRC_DIR)ft_is/ft_min.c
+all: ${NAME}
 
-FTLST_DIR		=	$(SRC_DIR)ft_lst/ft_lstadd_back.c \
-					$(SRC_DIR)ft_lst/ft_lstadd_front.c \
-					$(SRC_DIR)ft_lst/ft_lstclear.c \
-					$(SRC_DIR)ft_lst/ft_lstdelone.c \
-					$(SRC_DIR)ft_lst/ft_lstiter.c \
-					$(SRC_DIR)ft_lst/ft_lstlast.c \
-					$(SRC_DIR)ft_lst/ft_lstmap.c \
-					$(SRC_DIR)ft_lst/ft_lstnew.c \
-					$(SRC_DIR)ft_lst/ft_lstsize.c
-
-FTMEM_DIR		=	$(SRC_DIR)ft_mem/ft_bzero.c \
-					$(SRC_DIR)ft_mem/ft_calloc.c \
-					$(SRC_DIR)ft_mem/ft_memchr.c \
-					$(SRC_DIR)ft_mem/ft_memcmp.c \
-					$(SRC_DIR)ft_mem/ft_memcpy.c \
-					$(SRC_DIR)ft_mem/ft_memmove.c \
-					$(SRC_DIR)ft_mem/ft_memset.c
-
-FTPUT_DIR		=	$(SRC_DIR)ft_put/ft_putchar_fd.c \
-					$(SRC_DIR)ft_put/ft_putendl_fd.c \
-					$(SRC_DIR)ft_put/ft_putnbr_fd.c \
-					$(SRC_DIR)ft_put/ft_putstr_fd.c
-
-FTSTR_DIR		=	$(SRC_DIR)ft_str/ft_split.c \
-					$(SRC_DIR)ft_str/ft_strchr.c \
-					$(SRC_DIR)ft_str/ft_strdup.c \
-					$(SRC_DIR)ft_str/ft_striteri.c \
-					$(SRC_DIR)ft_str/ft_strjoin.c \
-					$(SRC_DIR)ft_str/ft_strlcat.c \
-					$(SRC_DIR)ft_str/ft_strlcpy.c \
-					$(SRC_DIR)ft_str/ft_strlen.c \
-					$(SRC_DIR)ft_str/ft_strmapi.c \
-					$(SRC_DIR)ft_str/ft_strncmp.c \
-					$(SRC_DIR)ft_str/ft_strnstr.c \
-					$(SRC_DIR)ft_str/ft_strrchr.c \
-					$(SRC_DIR)ft_str/ft_strtrim.c \
-					$(SRC_DIR)ft_str/ft_substr.c
-
-FTTO_DIR		=	$(SRC_DIR)ft_to/ft_atoi.c \
-					$(SRC_DIR)ft_to/ft_itoa.c \
-					$(SRC_DIR)ft_to/ft_itoa_base.c \
-					$(SRC_DIR)ft_to/ft_tolower.c \
-					$(SRC_DIR)ft_to/ft_toupper.c
-
-FTPRINTF_DIR	=	$(SRC_DIR)ft_printf/ft_printf.c \
-					$(SRC_DIR)ft_printf/ft_handle_char.c \
-					$(SRC_DIR)ft_printf/ft_handle_hex.c \
-					$(SRC_DIR)ft_printf/ft_handle_int.c \
-					$(SRC_DIR)ft_printf/ft_handle_percent.c \
-					$(SRC_DIR)ft_printf/ft_handle_pointer.c \
-					$(SRC_DIR)ft_printf/ft_handle_string.c \
-					$(SRC_DIR)ft_printf/ft_handle_unsigned.c \
-					$(SRC_DIR)ft_printf/ft_printf_utils.c \
-
-
-GNL_DIR			=	$(SRC_DIR)get_next_line/get_next_line.c \
-					$(SRC_DIR)get_next_line/get_next_line_utils.c
-
-SRCS 			= $(FTIS_DIR) $(FTLST_DIR) $(FTMEM_DIR) $(FTPUT_DIR) $(FTSTR_DIR) $(FTTO_DIR) $(FTPRINTF_DIR) $(GNL_DIR) $(INC)*.h
-
-OBJ 			= $(patsubst $(SRC_DIR)%.c,$(OBJ_DIR)%.o,$(SRCS))
-
-all:	$(NAME)
-
-$(NAME):	$(OBJ)
-			$(AR) $(NAME) $(OBJ)
-
-$(OBJ_DIR)%.o:	$(SRC_DIR)%.c
-				@mkdir -p $(@D)
-				$(CC) $(CFLAGS) $(INC) -c $< -o $@
+$(NAME): ${OBJS}
+	ar rcs ${NAME} ${OBJS}
 
 clean:
-				@$(RM) -r $(OBJ_DIR)
-				@$(RM) .cache_exists
+	rm -f ${OBJS} ${OBJS_BONUS}
 
-fclean: 		clean
-				@$(RM) $(NAME)
+fclean: clean
+	rm -f ${NAME}
 
-re: 			fclean all
+re: fclean all
 
-.PHONY: 		all clean fclean re
+.PHONY: all clean fclean re bonus 

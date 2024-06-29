@@ -3,32 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   check_input_utils2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 17:03:42 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/05 15:56:29 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/06/15 16:23:49 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/minishell.h"
 
 int	is_invalid_token(char c)
 {
 	if (c == '|')
-		return (TRUE);
+		return (1);
 	if (c == '>')
-		return (TRUE);
+		return (1);
 	if (c == '<')
-		return (TRUE);
-	return (FALSE);
+		return (1);
+	return (0);
 }
 
 int	unexpected_token(char *input)
 {
 	if (input[0] == '<' && input[1] == '<')
-		return (syntax_error("<<"));
+		return (print_syntax_error("<<"));
 	else if (input[0] == '>' && input[1] == '>')
-		return (syntax_error(">>"));
+		return (print_syntax_error(">>"));
 	input[1] = '\0';
-	return (syntax_error(input));
+	return (print_syntax_error(input));
 }

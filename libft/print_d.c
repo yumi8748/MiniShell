@@ -1,24 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   print_d.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/27 18:44:30 by leochen          ###   ########.fr       */
+/*   Created: 2023/11/27 19:18:14 by leochen           #+#    #+#             */
+/*   Updated: 2024/05/07 16:22:11 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "libft.h"
 
-
-int	main(int ac, char **av, char **env)
+int	print_d(int nb)
 {
-	if (ac > 1 && av)
-	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
-	}
-	return (minishell(init_minienv(env)));
+	int		len;
+	char	*str;
+
+	ft_putnbr_fd(nb, 1);
+	str = ft_itoa(nb);
+	len = ft_strlen(str);
+	free(str);
+	return (len);
 }

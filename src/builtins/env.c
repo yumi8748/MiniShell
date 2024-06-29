@@ -1,24 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 14:39:28 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/27 18:44:30 by leochen          ###   ########.fr       */
+/*   Created: 2024/06/27 14:03:44 by leochen           #+#    #+#             */
+/*   Updated: 2024/06/29 14:16:09 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/minishell.h"
 
-
-int	main(int ac, char **av, char **env)
+int	env(t_env *minienv)
 {
-	if (ac > 1 && av)
+	t_env	*i;
+
+	i = minienv;
+	while (i)
 	{
-		ft_putstr_fd("Minishell can't take arguments!\n", STDOUT_FILENO);
-		return (EXIT_FAILURE);
+		if (ft_strchr(i->key_pair, '='))
+			ft_putendl_fd(i->key_pair, STDOUT_FILENO);
+		i = i->next;
 	}
-	return (minishell(init_minienv(env)));
+	return (0);
 }
