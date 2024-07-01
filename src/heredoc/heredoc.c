@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:04:51 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 14:58:06 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 15:31:54 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,21 +99,16 @@ void read_heredoc(int *exit_status, t_env *minienv, char *delimiter, int heredoc
     file = tmp_here_file(heredoc_number);  // 生成临时文件名储存heredoc_ref  /tmp/heredoc-1
 	file_fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);  // 打开该临时文件  0644 作为文件的权限参数，表示创建一个新文件，文件所有者有读写权限，文件所有组和其他用户只有读权限
 	free_str(file);
-    while (1)
+	line_read = readline("> ");  // 读取用户输入  char *readline(const char *prompt);    char *readline(const char *prompt);
+    while (line_read && ft_strncmp(line_read, delimiter, ft_strlen(delimiter)) != 0)
     {
-        line_read = readline("> ");  // 读取用户输入  char *readline(const char *prompt);    char *readline(const char *prompt);
-		if (!line_read)
-      	{
-			print_error_msg("warning: here-document delimited by end-of-file. Wanted", delimiter);
-			break;
-		}
-		if (ft_strncmp(line_read, delimiter, ft_strlen(delimiter)) == 0 && line_read[ft_strlen(delimiter)] == '\0')
-            break;
 		expand_exit_status(&line_read, *exit_status);  // 扩展退出状态
     	expand_variables(&line_read, minienv);  // 扩展变量
         ft_putendl_fd(line_read, file_fd);  // 写入临时文件
         free_str(line_read); //readline 函数会自动分配内存来存储用户输入的字符串，因此在使用完这块内存后，我们需要使用 free 函数将其释放
     }
+	if (!line_read)
+		print_error_msg("warning: here-document delimited by end-of-file. Wanted", delimiter);
     free_str(line_read);
     close(file_fd);
     free_str(delimiter);

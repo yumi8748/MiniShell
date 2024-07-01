@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 18:28:42 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 15:01:38 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 15:59:46 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	*get_real_path(char *cmd, void *minienv)
 	{
 		ft_strlcpy(path, minienv_value("PWD", minienv), sizeof(path));
 		ft_strlcat(path, cmd + 1, sizeof(path));
-			// Append cmd without the initial dot
+		// Append cmd without the initial dot
 	}
 	else if (strncmp(cmd, "../", 3) == 0)
 	{
@@ -33,7 +33,7 @@ char	*get_real_path(char *cmd, void *minienv)
 			*last_slash = '\0'; // Remove the last part of the path
 			ft_strlcpy(path, tmp, sizeof(path));
 			ft_strlcat(path, cmd + 2, sizeof(path));
-				// Append cmd without the initial two dots
+			// Append cmd without the initial two dots
 		}
 	}
 	else if (*cmd == '/')
@@ -54,17 +54,11 @@ char	*find_executable_path(char *cmd, char **splited_paths)
 	{
 		tmp = ft_strjoin(splited_paths[i], "/");
 		if (!tmp)
-		{
-			free_str_array(splited_paths);
-			return (NULL);
-		}
+			return (free_str_array(splited_paths), NULL);
 		path = ft_strjoin(tmp, cmd);
 		free_str(tmp);
 		if (!path)
-		{
-			free_str_array(splited_paths);
-			return (NULL);
-		}
+			return (free_str_array(splited_paths), NULL);
 		if (access(path, F_OK) == 0) //若存在 返回0
 			return (path);
 		free_str(path);
