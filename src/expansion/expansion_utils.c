@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 12:34:47 by leochen           #+#    #+#             */
-/*   Updated: 2024/07/04 13:24:55 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/04 13:57:52 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,34 +56,89 @@ static int	check_expansion_format(char *s)
 	return (FALSE);
 }
 
-char	*find_var_pos(char *input)
-{
-	int	i;
+// char	*find_var_pos(char *input)
+// {
+// 	int	i;
 
-	i = 0;
-	while (input[i])
+// 	i = 0;
+// 	while (input[i])
+// 	{
+// 		if (input[i] == '\'')
+// 			i = skip_quotes(input, i, '\'');
+// 		else if (input[i] == '\"')
+// 		{
+// 			i++;
+// 			while (input[i] && input[i] != '\"')
+// 			{
+// 				if (input[i] && check_expansion_format(input + i) == TRUE)
+// 					return (input + i);
+// 				i++;
+// 			}
+// 			if (input[i])
+// 				i++;
+// 		}
+// 		if (input[i] && check_expansion_format(input + i) == TRUE)
+// 			return (input + i);
+// 		i++;
+// 	}
+// 	return (NULL);
+// }
+
+
+
+static int find_in_double_quotes(char *input, int index)
+{
+    int result = index + 1; 
+    while (input[result] && input[result] != '\"')
 	{
-		if (input[i] == '\'')
-			i = skip_quotes(input, i, '\'');
-		else if (input[i] == '\"')
+        if (check_expansion_format(input + result))
 		{
-			i++;
-			while (input[i] && input[i] != '\"')
-			{
-				if (input[i] && check_expansion_format(input + i) == TRUE)
-					return (input + i);
-				i++;
-			}
-			if (input[i])
-				i++;
-		}
-		if (input[i] && check_expansion_format(input + i) == TRUE)
-			return (input + i);
-		i++;
-	}
-	return (NULL);
+            return (result);
+        }
+        result++;
+    }
+    return (result); 
 }
 
+static int skip_single_quotes(char *input, int index) {
+    index++;
+    while (input[index] && input[index] != '\'')
+	{
+        index++;
+    }
+    if (input[index])
+	{
+        index++; 
+    }
+    return (index);
+}
+
+char *find_var_pos(char *input)
+{
+    int i;
+    int result;
+
+	i = 0;
+    while (input[i]) {
+        if (input[i] == '\'') 
+            i = skip_single_quotes(input, i);
+        else if (input[i] == '\"')
+		{
+            result = find_in_double_quotes(input, i);
+            if (input[result] != '\"' && input[result] != '\0') 
+                return (input + result);
+            i = result;
+        } else
+		{
+            if (check_expansion_format(input + i))
+                return (input + i);
+        }
+        if (!input[i])
+            break;
+        i++;
+    }
+    return (NULL);
+}
 void	var_at_start(char **input, char *var_value, char *after_var)
 {
 	char	*updated_input;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 17:59:43 by leochen           #+#    #+#             */
-/*   Updated: 2024/07/04 13:10:55 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/04 14:00:00 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,23 +24,23 @@ int	skip_quotes(char *s, int i, char quote_type)
 
 char	*find_here_pos(char *str)
 {
-	int	i;
+    int	i;
 
-	i = 0;
-	while (str[i] && str[i + 1])
-	{
-		if (str[i] == '\'')
-			i = skip_quotes(str, i, '\'');
-		else if (str[i] == '\"')
-		{
-			i = skip_quotes(str, i, '\"');
-		}
-		if (str[i] == '<' && str[i + 1] == '<')
-			return (&str[i]);
-		if (str[i])
-			i++;
-	}
-	return (NULL);
+    i = 0;
+    while (str[i] && str[i + 1])
+    {
+        if (str[i] == '\'' || str[i] == '\"')
+        {
+            i = skip_quotes(str, i, str[i]);
+            if (str[i] == '\0') 
+                 break;
+        }
+        if (str[i] == '<' && str[i + 1] == '<')
+            return (&str[i]);
+        else
+            i++;
+    }
+    return (NULL);
 }
 
 char	*name_after_redirect(char *s)

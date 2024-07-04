@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_utils2.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 12:29:11 by leochen           #+#    #+#             */
-/*   Updated: 2024/07/04 13:24:29 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/04 13:58:57 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,30 +28,48 @@ int	is_exit_marker(char *s, int i)
 	return (0);
 }
 
-int	find_exit_marker(char *s)
-{
-	int	i;
 
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == '\'')
-			i = skip_quotes(s, i, '\'');
-		else if (s[i] == '\"')
-		{
-			i++;
-			while (s[i] && s[i] != '\"')
-			{
-				if (s[i] && is_exit_marker(s, i))
-					return (i);
-				i++;
-			}
-			if (s[i])
-				i++;
-		}
-		if (s[i] && is_exit_marker(s, i))
-			return (i);
-		i++;
-	}
-	return (-1);
+static int handle_quoted_section(char *s, int i)
+{
+    if (s[i] == '\'')
+    {
+        i = skip_quotes(s, i, '\'');
+    }
+    else if (s[i] == '\"')
+    {
+        i++;
+        while (s[i] && s[i] != '\"')
+        {
+            if (is_exit_marker(s, i))
+                return (i);
+            i++;
+        }
+        if (s[i])
+            i++;
+    }
+    return i;
 }
+
+int find_exit_marker(char *s)
+{
+    int i = 0;
+    while (s[i])
+    {
+        if (s[i] == '\'' || s[i] == '\"')
+        {
+            i = handle_quoted_section(s, i);
+            if (s[i] == '\0' || is_exit_marker(s, i))
+                break;
+        }
+        else if (is_exit_marker(s, i))
+        {
+            return (i);
+        }
+        if (s[i])
+            i++;
+        else
+            break;
+    }
+    return (s[i] && is_exit_marker(s, i)) ? i : -1;
+}
+
