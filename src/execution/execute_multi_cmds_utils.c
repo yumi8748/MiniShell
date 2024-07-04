@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_multi_cmds_utils.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 18:11:11 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 15:15:28 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:53:12 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ int	*init_pid_array(char **splited_cmds)
 	if (!pid_arry)
 		return (NULL);
 	ft_memset(pid_arry, 0, sizeof(int) * len);
-	// printf("len = %d\n", len);
 	return (pid_arry);
 }
 

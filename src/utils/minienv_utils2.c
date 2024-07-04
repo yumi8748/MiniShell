@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minienv_utils2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leoniechen <leoniechen@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 18:17:53 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 15:03:36 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 23:16:02 by leoniechen       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,16 @@ char	*get_path_from_env(char *cmd, t_env *minienv)
 	path = find_executable_path(cmd, splited_paths);
 	free_str_array(splited_paths);
 	return (path);
+}
+
+int	str_equal(const char *str1, const char *str2)
+{
+	size_t	size;
+
+	if (!str1 || !str2)
+		return (0);
+	size = ft_strlen(str1);
+	if (size != ft_strlen(str2))
+		return (0);
+	return (ft_strncmp(str1, str2, size) == 0);
 }

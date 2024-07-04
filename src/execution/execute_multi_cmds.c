@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 15:52:51 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/07/01 13:16:04 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/03 19:48:14 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	execute_multi_cmds(char **splited_cmds, t_env **minienv)
 			print_error_msg("fork", splited_cmds[i]);
 		else if (pid_array[i] == 0)
 		{
-			free(pid_array); //在子进程中释放pid_array 不影响父进程的pid_array
+			free(pid_array);
 			_handle_redirects(splited_cmds[i], splited_cmds, minienv);
 			_execute_cmd(splited_cmds[i], splited_cmds, minienv);
 		}
@@ -41,16 +41,11 @@ int	execute_multi_cmds(char **splited_cmds, t_env **minienv)
 }
 
 void	_execute_cmd(char *cmd, char **cmds, t_env **minienv)
-// cmd是splited_cmds[i] 也就是按照|分割的每个还未处理成可执行的命令 cmds是splited_cmds
 {
-	char **args;
+	char	**args;
 
-	// printf("here\n");
 	close_extra_fds();
-	// printf("%s\n", cmd);
-	args = split_one_arg(cmd);
-	// printf("splited_cmd[i][0]:%s\n", args[0]);
-	// printf("splited_cmd[1]:%s\n", args[1]);
+	args = split_one_arg(cmd, minienv);
 	free_str_array(cmds);
 	if (is_builtin(args[0]))
 		_execute_builtin(args, minienv);
@@ -69,11 +64,11 @@ int	_execute_builtin(char **args, t_env **minienv)
 	exit(exit_status);
 }
 
-int	_execute_normal_cmd(char **args, t_env *minienv) //没有fork(pid) signal
+int	_execute_normal_cmd(char **args, t_env *minienv)
 {
-	char *cmd;
-	char *path;
-	char **envp;
+	char	*cmd;
+	char	*path;
+	char	**envp;
 
 	cmd = args[0];
 	if (is_empty(cmd))

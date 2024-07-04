@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 14:02:31 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 14:45:56 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/03 20:07:14 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	execute_one_cmd(char *cmd, t_env **minienv)
 		free(cmd);
 		return (EXIT_FAILURE);
 	}
-	args = split_one_arg(cmd);
+	args = split_one_arg(cmd, minienv);
 	free(cmd);
 	if (is_builtin(args[0]))
 		exit_status = execute_builtin(args, minienv);
@@ -34,8 +34,6 @@ int	execute_one_cmd(char *cmd, t_env **minienv)
 	_restore_original_fds(original_fds);
 	return (exit_status);
 }
-
-/*get path里面有个126的情况 他和在一起了 要分开成为其中一个是127*/
 
 int	is_builtin(char *cmd)
 {
@@ -60,25 +58,23 @@ int	is_builtin(char *cmd)
 
 int	execute_builtin(char **args, t_env **minienv)
 {
-	char	*cmd;
-	int		exit_status;
+	char	*command;
 
-	cmd = args[0];
-	if (ft_strncmp(cmd, "echo", 4) == 0 && cmd[4] == '\0')
-		exit_status = echo(args);
-	else if (ft_strncmp(cmd, "pwd", 3) == 0 && cmd[3] == '\0')
-		exit_status = ft_pwd();
-	else if (ft_strncmp(cmd, "env", 3) == 0 && cmd[3] == '\0')
-		exit_status = env(*minienv);
-	else if (ft_strncmp(cmd, "export", 6) == 0 && cmd[6] == '\0')
-		exit_status = builtin_export(args, minienv);
-	else if (ft_strncmp(cmd, "unset", 5) == 0 && cmd[5] == '\0')
-		exit_status = unset(args, minienv);
-	else if (ft_strncmp(cmd, "cd", 2) == 0 && cmd[2] == '\0')
-		exit_status = cd(args, *minienv);
-	else if (ft_strncmp(cmd, "exit", 4) == 0 && cmd[4] == '\0')
-		exit_status = shell_exit(args, minienv);
+	command = args[0];
+	if (str_equal(command, "echo"))
+		return (echo(args));
+	if (str_equal(command, "pwd"))
+		return (pwd());
+	if (str_equal(command, "env"))
+		return (env(*minienv));
+	if (str_equal(command, "export"))
+		return (builtin_export(args, minienv));
+	if (str_equal(command, "unset"))
+		return (unset(args, minienv));
+	if (str_equal(command, "cd"))
+		return (cd(args, *minienv));
+	if (str_equal(command, "exit"))
+		return (shell_exit(args, minienv));
 	else
-		exit_status = EXIT_FAILURE;
-	return (exit_status);
+		return (EXIT_FAILURE);
 }

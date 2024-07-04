@@ -13,3 +13,5 @@ to do:
 - [ ] norme
 - [ ] test.sh 里面的case
 - [ ] tester
+
+valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes --trace-children=yes ./minishell

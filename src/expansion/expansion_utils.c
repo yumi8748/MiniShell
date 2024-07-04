@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 12:34:47 by leochen           #+#    #+#             */
-/*   Updated: 2024/07/01 13:33:03 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/04 13:24:55 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,32 @@
 
 int	varname_size(char *s)
 {
-    int	i;
+	int	i;
 
 	i = 0;
-	if (!ft_isalpha(s[0]) && s[0] != '_')   //variable name must start with a letter or an underscore
-        return (1); 
-    while (s[i])
+	if (!ft_isalpha(s[0]) && s[0] != '_')
+		return (1);
+	while (s[i])
 	{
-        if (!is_valid_varchar(s[i]))
-            return (i);  //variable name must contain only letters, numbers, and underscores
-        i++;
-    }
-    return (i);  
+		if (!is_valid_varchar(s[i]))
+			return (i);
+		i++;
+	}
+	return (i);
 }
 
-static int check_expansion_format(char *s) //s starts with '$'
+static int	check_expansion_format(char *s)
 {
-	int i;
+	int	i;
 
 	i = 0;
+	if (!s || !*s)
+		return (FALSE);
 	if (s[i] == '$')
 	{
 		if (s[i + 1] == '{')
 		{
-			i+=2;
+			i += 2;
 			while (s[i] && s[i] != '}')
 			{
 				if (!is_valid_varchar(s[i]))
@@ -54,38 +56,35 @@ static int check_expansion_format(char *s) //s starts with '$'
 	return (FALSE);
 }
 
-
-
-char *find_var_pos(char *input) //返回的变量以‘$’
+char	*find_var_pos(char *input)
 {
-    int i;
-	
+	int	i;
+
 	i = 0;
-    while (input[i])
+	while (input[i])
 	{
-        if (input[i] == '\'')
-            i = skip_quotes(input, i, '\'');
+		if (input[i] == '\'')
+			i = skip_quotes(input, i, '\'');
 		else if (input[i] == '\"')
 		{
-            i++;
-            while (input[i] && input[i] != '\"')
+			i++;
+			while (input[i] && input[i] != '\"')
 			{
-                if (check_expansion_format(input + i) == TRUE)
-                    return (input + i);
-                i++;
-            }
-            if (input[i])
-                i++;
-        }
-        if (check_expansion_format(input + i) == TRUE)
-            return (input + i);
-        i++;
-    }
-    return (NULL);
+				if (input[i] && check_expansion_format(input + i) == TRUE)
+					return (input + i);
+				i++;
+			}
+			if (input[i])
+				i++;
+		}
+		if (input[i] && check_expansion_format(input + i) == TRUE)
+			return (input + i);
+		i++;
+	}
+	return (NULL);
 }
 
-
-void var_at_start(char **input, char *var_value, char *after_var)
+void	var_at_start(char **input, char *var_value, char *after_var)
 {
 	char	*updated_input;
 
@@ -97,13 +96,14 @@ void var_at_start(char **input, char *var_value, char *after_var)
 	*input = updated_input;
 }
 
-void	var_not_at_start(char **input, char *var_value, char *after_var, char *pos)
+void	var_not_at_start(char **input, char *var_value, char *after_var,
+		char *pos)
 {
-	char *updated_input;
-	char *until_var;
-	char *tmp;
+	char	*updated_input;
+	char	*until_var;
+	char	*tmp;
 
-    until_var = ft_substr(*input, 0, pos - *input);
+	until_var = ft_substr(*input, 0, pos - *input);
 	if (!var_value)
 		updated_input = ft_strjoin(until_var, after_var);
 	else
@@ -114,5 +114,5 @@ void	var_not_at_start(char **input, char *var_value, char *after_var, char *pos)
 	}
 	free(until_var);
 	free(*input);
-	*input = updated_input;	
+	*input = updated_input;
 }

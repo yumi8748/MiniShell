@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 14:03:44 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 14:16:04 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:50:26 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
 
-// echo
 int	is_minus_n(char *s)
 {
 	if (s[0] != '-')
@@ -34,7 +33,7 @@ int	echo(char **args)
 
 	print_new_line = 1;
 	i = 1;
-	while (args[i] && is_minus_n(args[i])) // Skip all initial '-n' options
+	while (args[i] && is_minus_n(args[i]))
 	{
 		print_new_line = 0;
 		i++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_error.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 17:53:17 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 15:03:43 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/02 14:50:06 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	check_args_error(char **args)
 {
 	long long	exit_status;
 
-	if (!args || !args[1]) // args[1]不存在说明直接退出exit 没有退出码 所以就是exit success?
+	if (!args || !args[1])
 	{
 		if (args)
 			free_str_array(args);
@@ -49,7 +49,7 @@ void	check_args_error(char **args)
 	if (!str_to_ll(args[1], &exit_status))
 	{
 		free_str_array(args);
-		exit_with_error("exit", "numeric argument required", BUILTIN_MISUSE);
+		exit_with_error("exit", "numeric argument required", 2);
 	}
 	if (args[2] != NULL)
 	{

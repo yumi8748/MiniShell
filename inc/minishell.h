@@ -6,7 +6,7 @@
 /*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 14:39:19 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/29 15:18:26 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/03 20:07:00 by yu-chen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # include <unistd.h>            // getpwd
 
 # define BUF_SIZE 2048
-# define BUILTIN_MISUSE 2
+# define MISUSE 2
 # define BOLD "\001\e[1m\002"
 # define RESET_SIZE "\001\e[0m\002"
 # define GREEN "\001\e[0;32m\002"
@@ -151,7 +151,7 @@ void	redirect_heredoc(char *cmd, int heredoc_ref);
 int		execute_one_cmd(char *cmd, t_env **minienv);
 int		is_builtin(char *cmd);
 int		execute_builtin(char **args, t_env **minienv);
-char	**split_one_arg(char *cmd);
+char	**split_one_arg(char *cmd, t_env **minienv);
 int		has_quote(char *cmd);
 void	replace_inquote_spaces(char *cmd);
 void	remove_quotes(char *cmd);
@@ -177,13 +177,13 @@ int		is_minus_n(char *s);
 int		echo(char **args);
 char	*cd_path(char **args, t_env *minienv);
 int		cd(char **args, t_env *minienv);
-int		ft_pwd(void);
+int		pwd(void);
 
 // builtins
 int		unset(char **argv, t_env **minienv);
 int		env(t_env *minienv);
-int		builtin_export(char **args, t_env **minienv);
-int		builtin_unset(char **argv, t_env **minienv);
+int		export(char **args, t_env **minienv);
+int		unset(char **argv, t_env **minienv);
 
 // multi_cmds.c   yu leo
 int		execute_multi_cmds(char **splited_cmds, t_env **minienv);
@@ -204,4 +204,31 @@ void	restore_original_fds(int original_fds[2]);
 char	*extract_delimiter(char *s, int start);
 void	free_str(char *s);
 
+int		if_append(char c);
+
+int		restore_fds(int original_fds[2]);
+
+void	initialize_original_fds(int original_fds[2]);
+
+int		process_redirects(char *cmd, int original_fds[2]);
+
+void	redirect_fd(int fd_to_redirect, int fd_location);
+void	duplicate_fd(int fd, int new_fd);
+
+void	stock_original_fds(int fd, int new_fd);
+
+void	print_fd_error(char *file, int fd, int new_fd);
+int		process_single_redirect(char *cmd, char redir_symbol,
+			int original_fds[2]);
+int		str_equal(const char *str1, const char *str2);
+int		builtin_export(char **args, t_env **minienv);
+
+int		contains_alpha(char *args);
+void	replace_tabs_with_spaces(char *str);
+void	replace_space_and_quote(char *command);
+char	*find_and_replace_tilde(char *command, t_env *minienv);
+void	replace_quote_by_null(char **exec_args);
+size_t	calculate_command_len(char *command, t_env *minienv);
+void	expand_tilde_path(char *new_cmd_ptr, char *cmd_ptr, char *expanded_path,
+			t_env *minienv);
 #endif

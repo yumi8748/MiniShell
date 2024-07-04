@@ -39,15 +39,18 @@ SRCS = $(SRC_DIR)/main.c \
        $(EXECUTION_DIR)/redirection_multi_cmds.c \
        $(EXECUTION_DIR)/redirection_one_cmd.c \
        $(EXECUTION_DIR)/redirection_utils.c \
+	   $(EXECUTION_DIR)/redirection_utils2.c \
        $(EXPANSION_DIR)/expansion.c \
        $(EXPANSION_DIR)/expansion_utils.c \
 	   $(EXPANSION_DIR)/expansion_utils2.c \
        $(HEREDOC_DIR)/heredoc.c \
        $(HEREDOC_DIR)/heredoc_utils.c \
        $(PARSER_DIR)/parse_cmd_utils2.c \
+	   $(PARSER_DIR)/parse_cmd_utils3.c \
        $(PARSER_DIR)/parse_cmd_utils.c \
        $(PARSER_DIR)/parse_path.c \
        $(PARSER_DIR)/parse_path_utils.c \
+	   $(PARSER_DIR)/thild.c \
        $(SIGNALS_DIR)/signals.c \
        $(UTILS_DIR)/check_input_utils2.c \
        $(UTILS_DIR)/check_input_utils.c \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cleaner.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 15:38:06 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 15:02:24 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 18:58:41 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	free_str(char *s)
 		free(s);
 }
 
-void	free_str_array(char **s) // changed name  void	free_array(char **arr)
+void	free_str_array(char **s)
 {
 	int	i;
 
@@ -55,7 +55,6 @@ void	clean_up_exit(char **args, t_env **minienv, int exit_status, int flag)
 	if (minienv)
 		free_minienv(minienv);
 	close_all_fds();
-	// check_args_error(args);
 	if (args)
 		free_str_array(args);
 	exit(exit_status);

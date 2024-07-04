@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_path.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/27 18:28:42 by leochen           #+#    #+#             */
-/*   Updated: 2024/07/01 15:59:46 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 18:14:37 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ char	*get_real_path(char *cmd, void *minienv)
 	{
 		ft_strlcpy(path, minienv_value("PWD", minienv), sizeof(path));
 		ft_strlcat(path, cmd + 1, sizeof(path));
-		// Append cmd without the initial dot
 	}
 	else if (strncmp(cmd, "../", 3) == 0)
 	{
@@ -30,17 +29,16 @@ char	*get_real_path(char *cmd, void *minienv)
 		last_slash = strrchr(tmp, '/');
 		if (last_slash)
 		{
-			*last_slash = '\0'; // Remove the last part of the path
+			*last_slash = '\0';
 			ft_strlcpy(path, tmp, sizeof(path));
 			ft_strlcat(path, cmd + 2, sizeof(path));
-			// Append cmd without the initial two dots
 		}
 	}
 	else if (*cmd == '/')
 		ft_strlcpy(path, cmd, sizeof(path));
 	else
 		return (NULL);
-	return (strdup(path)); // Duplicate the path to return
+	return (strdup(path));
 }
 
 char	*find_executable_path(char *cmd, char **splited_paths)
@@ -58,9 +56,14 @@ char	*find_executable_path(char *cmd, char **splited_paths)
 		path = ft_strjoin(tmp, cmd);
 		free_str(tmp);
 		if (!path)
-			return (free_str_array(splited_paths), NULL);
-		if (access(path, F_OK) == 0) //若存在 返回0
+		{
+			free_str_array(splited_paths);
+			return (NULL);
+		}
+		if (access(path, F_OK) == 0)
+		{
 			return (path);
+		}
 		free_str(path);
 		i++;
 	}

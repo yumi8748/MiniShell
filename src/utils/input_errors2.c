@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_errors2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 15:05:06 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/28 21:10:14 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 18:59:07 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,53 +67,3 @@ int	is_invalid_syntax(char *s)
 		return (1);
 	return (0);
 }
-
-/*int empty_pipe(char *str)
-{
-	char	*current;
-	char	*next_pipe;
-	char	*next_pipe;
-
-	current = str;
-	while (*current)
-	{
-		if (*current == '|')
-		{
-			current++;
-			while (*current == ' ' || *current == '\t')
-				current++;
-			if (*current == '|')
-				return (print_syntax_error("|"));
-		}
-		else
-			current++;
-	}
-	return (0);
-}*/
-
-/*int redirect_without_label(char *str)
-{
-	char	*current;
-	char	next_redirect;
-	char	*redirect_position;
-
-	current = str;
-	while (*current)
-	{
-		if (*current == '<' || *current == '>')
-		{
-			if (*(current + 1) == *current) // Handle '<<' or '>>'
-				current++;
-			current++;
-			while (*current == ' ' || *current == '\t')
-				current++;
-			if (*current == '\0')
-				return (print_syntax_error("newline"));
-			if (is_invalid_token(*current))
-				return (unexpected_token(current));
-		}
-		else
-			current++;
-	}
-	return (0);
-}*/

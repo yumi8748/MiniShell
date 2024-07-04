@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 14:16:11 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/29 14:16:32 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:50:35 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	str_to_ll(char *s, long long *nb)
 	{
 		if (*s < '0' || *s > '9')
 			return (0);
-		if (res > (LLONG_MAX - (*s - '0')) / 10) //优势：避免了乘法操作直接引起的溢出。
+		if (res > (LLONG_MAX - (*s - '0')) / 10)
 			return (0);
 		res = res * 10 + (*s - '0');
 		s++;

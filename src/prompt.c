@@ -1,12 +1,12 @@
 /* ************************************************************************** */
-/*                                   ➡️                                        */
+/*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   chen_prompt.c                                      :+:      :+:    :+:   */
+/*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leoniechen <leoniechen@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 15:58:28 by leochen           #+#    #+#             */
-/*   Updated: 2024/06/03 16:35:24 by leochen          ###   ########.fr       */
+/*   Updated: 2024/07/01 23:08:32 by leoniechen       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ static char	*get_hostname(t_env *minienv, int *free_hostname)
 	}
 	return (hostname);
 }
+
 char	*prompt_msg(t_env *minienv)
 {
 	char	*user;
@@ -87,7 +88,7 @@ char	*prompt_msg(t_env *minienv)
 		pwd = "unkown";
 	if (ft_strrchr(pwd, '/') + 1)
 		dir = ft_strrchr(pwd, '/') + 1;
-	if (ft_strncmp(pwd, "/", 2) == 0)
+	if (str_equal(pwd, "/") == 0)
 		dir = "/";
 	return (cat_prompt(user, hostname, dir, free_hostname));
 }

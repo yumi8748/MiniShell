@@ -1,0 +1,191 @@
+Simple Commands & Global Variables
+
+    /bin/ls
+    /bin/ls non_existing_file
+    ``
+    " "
+    /bin/echo Hello
+    /bin/echo
+
+Commands with Arguments
+
+    /bin/ls -l
+    /bin/ls -l non_existing_file
+    /bin/echo Hello World
+    /bin/cat /etc/passwd
+    /bin/cat non_existing_file
+    /bin/cat
+    /bin/grep root /etc/passwd
+    /bin/grep non_existing_pattern /etc/passwd
+    /bin/wc /etc/passwd
+    /bin/awk '{print $1}' /etc/passwd
+    /bin/awk '/root/ {print $1}' /etc/passwd
+
+echo
+
+    echo Hello World
+    echo -n No Newline
+    echo ""
+    echo "Multiple spaces"
+    echo
+    echo -n -n -n Hello
+    echo "Hello, \$USER"
+    echo "Hello, $USER"
+
+exit
+
+    exit
+    exit 0
+    exit 1
+    exit 255
+    exit 256
+    exit -1
+    exit invalid_arg
+
+Return Value of a Process
+
+    /bin/ls; echo $?
+    /bin/ls non_existing_file; echo $?
+    /bin/ls; /bin/ls non_existing_file; echo $?
+    expr $? + $?
+    /bin/false; echo $?
+    /bin/true; echo $?
+    /bin/grep root /etc/passwd; echo $?
+    /bin/grep non_existing_pattern /etc/passwd; echo $?
+
+Signals
+
+    ctrl-C in an empty prompt
+    ctrl-\ in an empty prompt
+    ctrl-D in an empty prompt
+    echo Hello then ctrl-C
+    echo Hello then ctrl-D
+    echo Hello then ctrl-\
+    cat then ctrl-C
+    cat then ctrl-\
+    cat then ctrl-D
+
+Double Quotes
+
+    echo "Hello World"
+    echo "cat lol.c | cat > lol.c"
+    echo ""
+    echo "Multiple spaces and special chars !@#$%^&*()"
+    echo "Hello, \$USER"
+    echo "Hello, $USER"
+    echo "This is a test with embedded \"quotes\" inside quotes"
+
+Single Quotes
+
+    echo '$USER'
+    echo 'Single quoted string'
+    echo ''
+    echo 'Multiple spaces and special chars !@#$%^&*()'
+    echo 'This is a test with embedded \'quotes\' inside quotes'
+
+env
+
+    env
+    env | grep HOME
+    env | grep USER
+    env | grep PATH
+
+export
+
+    export TEST_VAR=Hello; env | grep TEST_VAR
+    export TEST_VAR=World; env | grep TEST_VAR
+    export EMPTY_VAR=; env | grep EMPTY_VAR
+    export TEST_VAR='Hello World'; env | grep TEST_VAR
+    export PATH=/usr/bin:/bin; env | grep PATH
+
+unset
+
+    export TEST_VAR=Hello; env | grep TEST_VAR; unset TEST_VAR; env | grep TEST_VAR
+    unset HOME; env | grep HOME
+    unset PATH; env | grep PATH
+    unset USER; env | grep USER
+
+cd
+
+    cd /; pwd
+    cd /non_existing_directory; pwd
+    cd ..; pwd
+    cd .; pwd
+    cd; pwd
+    cd ~; pwd
+    cd /tmp; pwd
+
+pwd
+
+    cd /; pwd
+    cd /home; pwd
+    cd /tmp; pwd
+    cd /usr/bin; pwd
+    cd /var/log; pwd
+
+Relative Path
+
+    cd /usr/bin; ./ls
+    cd ../lib; ./ls
+    cd /usr; ./bin/ls
+    cd /; ./usr/bin/ls
+    cd /etc; ./../bin/ls
+
+Environment Path
+
+    ls
+    unset PATH; ls
+    export PATH=/usr/bin:/bin; ls
+    export PATH=/non_existing_path; ls
+    export PATH=; ls
+    export PATH=/usr/local/bin:/usr/bin:/bin; ls
+
+Redirection
+
+    /bin/echo Hello > testfile
+    /bin/cat < testfile
+    /bin/echo World >> testfile
+    /bin/cat < testfile
+    /bin/echo Error > /root/testfile
+    /bin/ls non_existing_file > /dev/null
+    /bin/ls / > testfile
+    /bin/ls / >> testfile
+
+Pipes
+
+    /bin/ls | /bin/grep src | /bin/more
+    /bin/ls filethatdoesntexist | /bin/grep bla | /bin/more
+    /bin/echo Hello | /bin/grep H
+    cat /etc/passwd | grep root | wc -l
+    ls -l | grep ".c" | sort
+    ps aux | grep bash | awk '{print $1, $2}'
+    find / -name "*.conf" | grep "system" | wc -l
+    echo "root:x:0:0:root:/root:/bin/bash" | awk -F: '{print $1, $3, $7}'
+    cat /etc/passwd | grep "/bin/bash" | wc -l
+    cat /etc/passwd | grep "/bin/bash" | awk -F: '{print $1}'
+
+Go Crazy and History
+
+    echo Hello
+    echo World
+    dsbksdgbksdghsd
+    cat | cat | ls
+    echo this is a long command with many arguments to test the buffer size and how the shell handles it
+    ls -l /etc | grep conf | more
+    find / -type f | grep log | wc -l
+    ps aux | grep ssh | awk '{print $1, $2}'
+    history
+    !! (execute the last command)
+
+Environment Variables
+
+    export USER=testuser; echo $USER; echo "$USER"; unset USER; echo $USER
+    echo $SHELL
+    export SHELL_VAR=test; echo $SHELL_VAR
+    unset SHELL_VAR; echo $SHELL_VAR
+    echo $HOME
+    echo $PATH
+    echo $USER
+    export NEW_VAR="Hello World"; echo $NEW_VAR
+    export ANOTHER_VAR=12345; echo $ANOTHER_VAR
+    export EMPTY_VAR=; echo $EMPTY_VAR

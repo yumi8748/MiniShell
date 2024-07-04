@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_errors.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yu-chen <yu-chen@student.42.fr>            +#+  +:+       +#+        */
+/*   By: leochen <leochen@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 19:53:46 by yu-chen           #+#    #+#             */
-/*   Updated: 2024/06/29 15:02:40 by yu-chen          ###   ########.fr       */
+/*   Updated: 2024/07/01 18:58:58 by leochen          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	is_empty(char *str)
 		return (1);
 	while (*str)
 	{
-		if (ft_isspace(*str) == 0) //只要有一个字符不是空格 就说明不是空的
+		if (ft_isspace(*str) == 0)
 			return (0);
 		str++;
 	}
@@ -63,7 +63,7 @@ int	is_input_error(char *input, int *exit_status, t_env *minienv)
 		is_error = 1;
 	else if (is_invalid_syntax(input))
 	{
-		*exit_status = 2; // why 2?
+		*exit_status = 2;
 		is_error = 1;
 	}
 	else if (handle_heredoc(input, exit_status, minienv) == 0)

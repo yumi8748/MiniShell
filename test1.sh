@@ -183,3 +183,25 @@ echo $?
 
 echo "unset PATH" | env -i $MINISHELL_PATH"/"$EXECUTABLE
 echo $?
+
+
+
+
+
+#compare parsing
+65 ,72    
+#parsing hell  
+exit code error 1, 5-9  12
+stderr  12-15 leak    74-76   101    
+#buitlin
+61 68 102 105 107 140 200 224 231 260   
+#pipelin 
+25 with leak-30  38-40 just leak 80-89 with leak   
+#smcd 4
+ 7  
+ #correction
+ 2 3 4 19   
+ #path fail 
+ 8 11   
+ #wild
+ 10 13-15
